@@ -1,0 +1,1 @@
+$("#pwdRecover").validate({ rules:{ txt_pwd: { required: true }, txt_con_pwd: { required: true, equalTo: "#txt_pwd" } } });
