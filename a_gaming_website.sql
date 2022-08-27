@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 19, 2022 at 05:07 PM
+-- Generation Time: Aug 27, 2022 at 06:52 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 7.4.26
 
@@ -66,19 +66,67 @@ INSERT INTO `tbl_admin_sidebar2` (`id`, `main_id`, `name`, `url`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tbl_round1`
+-- Table structure for table `tbl_game_cases`
 --
 
-CREATE TABLE `tbl_round1` (
+CREATE TABLE `tbl_game_cases` (
   `id` int(11) NOT NULL,
-  `step_2` int(11) DEFAULT NULL,
-  `step_3` int(11) DEFAULT NULL,
-  `step_4` int(11) DEFAULT NULL,
-  `step_5` int(11) DEFAULT NULL,
-  `step_6` int(11) DEFAULT NULL,
-  `cash_hand` int(11) DEFAULT NULL,
-  `win` int(11) DEFAULT NULL
+  `case_id` int(11) DEFAULT NULL,
+  `round_id` int(11) DEFAULT NULL,
+  `step_id` int(11) DEFAULT NULL,
+  `action` int(11) DEFAULT NULL COMMENT '0 for out of money, 1 for yes, 2 for no',
+  `salary` int(11) DEFAULT NULL,
+  `cash_in_hand` int(11) DEFAULT NULL,
+  `expenditure` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `tbl_game_cases`
+--
+
+INSERT INTO `tbl_game_cases` (`id`, `case_id`, `round_id`, `step_id`, `action`, `salary`, `cash_in_hand`, `expenditure`) VALUES
+(1, NULL, 1, 2, 0, 50000, 10000, 40000),
+(2, 1, 1, 3, 1, 60000, 15000, 45000),
+(3, 1, 1, 3, 2, 50000, 10000, 40000),
+(4, 1, 1, 4, 1, 58000, 3000, 55000),
+(5, 1, 1, 4, 2, 50000, 10000, 40000),
+(6, 2, 1, 4, 1, 68000, 8000, 60000),
+(7, 2, 1, 4, 2, 60000, 15000, 45000),
+(8, 3, 1, 4, 1, 58000, 3000, 55000),
+(9, 3, 1, 4, 2, 50000, 10000, 40000),
+(10, 1, 1, 5, 1, 50000, 0, 50000),
+(11, 2, 1, 5, 1, 60000, 5000, 55000),
+(12, 3, 1, 5, 1, 50000, 0, 50000),
+(13, 4, 1, 5, 0, 58000, -7000, 65000),
+(14, 5, 1, 5, 1, 50000, 0, 50000),
+(15, 6, 1, 5, 0, 68000, -2000, 70000),
+(16, 7, 1, 5, 1, 60000, 5000, 55000),
+(17, 8, 1, 5, 0, 58000, -7000, 65000),
+(18, 9, 1, 5, 1, 50000, 0, 50000),
+(19, 1, 1, 6, 1, 50000, 0, 50000),
+(20, 1, 1, 6, 2, 50000, 10000, 40000),
+(21, 2, 1, 6, 1, 60000, 5000, 55000),
+(22, 2, 1, 6, 2, 60000, 15000, 45000),
+(23, 3, 1, 6, 1, 50000, 0, 50000),
+(24, 3, 1, 6, 2, 50000, 10000, 40000),
+(25, 4, 1, 6, 0, 58000, -7000, 65000),
+(26, 5, 1, 6, 1, 50000, 0, 50000),
+(27, 5, 1, 6, 2, 50000, 10000, 40000),
+(28, 6, 1, 6, 0, 68000, -2000, 70000),
+(29, 7, 1, 6, 1, 60000, 5000, 55000),
+(30, 7, 1, 6, 2, 60000, 15000, 45000),
+(31, 8, 1, 6, 0, 58000, -7000, 65000),
+(32, 9, 1, 6, 1, 50000, 0, 50000),
+(33, 9, 1, 6, 2, 50000, 10000, 40000),
+(34, 10, 1, 6, 0, 50000, -10000, 60000),
+(35, 11, 1, 6, 0, 60000, -5000, 65000),
+(36, 12, 1, 6, 0, 50000, -10000, 60000),
+(37, 13, 1, 6, 0, 58000, -17000, 75000),
+(38, 14, 1, 6, 0, 50000, -10000, 60000),
+(39, 15, 1, 6, 0, 68000, -12000, 80000),
+(40, 16, 1, 6, 0, 60000, -5000, 65000),
+(41, 17, 1, 6, 0, 58000, -17000, 75000),
+(42, 18, 1, 6, 0, 50000, -10000, 60000);
 
 -- --------------------------------------------------------
 
@@ -128,9 +176,9 @@ ALTER TABLE `tbl_admin_sidebar2`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `tbl_round1`
+-- Indexes for table `tbl_game_cases`
 --
-ALTER TABLE `tbl_round1`
+ALTER TABLE `tbl_game_cases`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -156,10 +204,10 @@ ALTER TABLE `tbl_admin_sidebar2`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `tbl_round1`
+-- AUTO_INCREMENT for table `tbl_game_cases`
 --
-ALTER TABLE `tbl_round1`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `tbl_game_cases`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `tbl_team`
