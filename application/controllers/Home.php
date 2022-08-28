@@ -22,15 +22,14 @@ class Home extends CI_Controller
     }
     public function round1()
     {
-        $bp=12500;
-        $this->r1step2(12500);// buy tcs stock
+        $this->r1step2(8000);// buy tcs stock
         $this->r1step3(10000, 5000);//---- buy youtube channel
         $this->r1step4(8000, 15000);// buy real state
         $this->r1step5(10000);// fixed medical expense
-        $this->r1step6(10000);// fixed medical expense
+        $this->r1step6(10000);// Loan Repayment
         echo "yes";
     }
-    //======================= round 1 step 2 ======================================
+    //======================= round 1 step 2 (buy tcs stock) ======================================
     public function r1step2($bp)
     {
         $salary = 50000;
@@ -71,11 +70,11 @@ class Home extends CI_Controller
         }
         return;
     }
-    //======================= round 1 step 3 ======================================
+    //======================= round 1 step 3 (buy youtube channel) ======================================
     public function r1step3($in, $out)
     {
-        $step_2_data = $this->db->get_where('tbl_game_cases', array('step_id'=> 2));
-        foreach ($step_2_data->result() as $step2) {
+        $step_2_data = $this->db->get_where('tbl_game_cases', array('step_id'=> 2))->result();
+        foreach ($step_2_data as $step2) {
             //--------- yes entry ---------
             $new_salary = $step2->salary+$in;
             $new_exp = $step2->expenditure+$out;
@@ -100,11 +99,10 @@ class Home extends CI_Controller
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
         }
     }
-    //======================= round 1 step 4 ======================================
+    //======================= round 1 step 4 (buy real state) ======================================
     public function r1step4($in, $out)
     {
-      for ($i=2; $i <=3; $i++) {
-        $step_data = $this->db->get_where('tbl_game_cases', array('step_id'=> $i));
+        $step_data = $this->db->get_where('tbl_game_cases', array('step_id'=> 3));
         foreach ($step_data->result() as $step) {
             //--------- yes entry ---------
             $new_salary = $step->salary+$in;
@@ -130,18 +128,17 @@ class Home extends CI_Controller
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
         }
     }
-  }
-    //======================= round 1 step 5 ======================================
+    //======================= round 1 step 5 (fixed medical expense)======================================
     public function r1step5($exp)
     {
-      for ($i=2; $i <=4; $i++) {
-        $step_data = $this->db->get_where('tbl_game_cases', array('step_id'=> $i));
+        $step_data = $this->db->get_where('tbl_game_cases', array('step_id'=> 4));
         foreach ($step_data->result() as $step) {
-          if($step->cash_in_hand >= $exp){
-            //--------- yes entry ---------
-            $new_salary = $step->salary;
-            $new_exp = $step->expenditure+$exp;
-            $data_insert = array('case_id'=>$step->id,
+            if ($step->cash_in_hand > $exp) {
+                //--------- yes entry ---------
+                $new_salary = $step->salary;
+                $new_exp = $step->expenditure+$exp;
+                $data_insert = array('case_id'=>$step->id,
+                'status'=>'survived',
             'round_id'=>1,
             'step_id'=>5,
             'action'=>1,
@@ -149,13 +146,13 @@ class Home extends CI_Controller
             'cash_in_hand' =>$step->cash_in_hand - ($exp),
             'expenditure' =>$new_exp,
             );
-            $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
-        }
-      else{
-        //--------- yes entry ---------
-        $new_salary = $step->salary;
-        $new_exp = $step->expenditure+$exp;
-        $data_insert = array('case_id'=>$step->id,
+                $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
+            } else {
+                //--------- out entry ---------
+                $new_salary = $step->salary;
+                $new_exp = $step->expenditure+$exp;
+                $data_insert = array('case_id'=>$step->id,
+        'status'=>'out',
         'round_id'=>1,
         'step_id'=>5,
         'action'=>0,
@@ -163,22 +160,21 @@ class Home extends CI_Controller
         'cash_in_hand' =>$step->cash_in_hand - ($exp),
         'expenditure' =>$new_exp,
         );
-        $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
-      }
+                $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
+            }
+        }
     }
-  }
-  }
-  //======================= round 1 step 6 ======================================
-  public function r1step6($exp)
-  {
-    for ($i=2; $i <=5; $i++) {
-      $step_data = $this->db->get_where('tbl_game_cases', array('step_id'=> $i));
-      foreach ($step_data->result() as $step) {
-        if($step->cash_in_hand >= $exp){
-          //--------- yes entry ---------
-          $new_salary = $step->salary;
-            $new_exp = $step->expenditure+$exp;
-          $data_insert = array('case_id'=>$step->id,
+    //======================= round 1 step 6 (Loan Repayment) ======================================
+    public function r1step6($exp)
+    {
+        $step_data = $this->db->get_where('tbl_game_cases', array('step_id'=> 5));
+        foreach ($step_data->result() as $step) {
+          if($step->status=='survived'){
+            if ($step->cash_in_hand >= $exp) {
+                //--------- yes entry ---------
+                $new_salary = $step->salary;
+                $new_exp = $step->expenditure+$exp;
+                $data_insert = array('case_id'=>$step->id,
           'round_id'=>1,
           'step_id'=>6,
           'action'=>1,
@@ -186,9 +182,9 @@ class Home extends CI_Controller
           'cash_in_hand' =>$step->cash_in_hand - ($exp),
           'expenditure' =>$new_exp,
           );
-          $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
-          //--------- no entry ---------
-          $data_insert = array('case_id'=>$step->id,
+                $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
+                //--------- no entry ---------
+                $data_insert = array('case_id'=>$step->id,
           'round_id'=>1,
           'step_id'=>6,
           'action'=>2,
@@ -196,13 +192,12 @@ class Home extends CI_Controller
           'cash_in_hand' =>$step->cash_in_hand,
           'expenditure' =>$step->expenditure,
           );
-          $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
-      }
-      else{
-        //--------- yes entry ---------
-        $new_salary = $step->salary;
-        $new_exp = $step->expenditure+$exp;
-        $data_insert = array('case_id'=>$step->id,
+                $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
+            } else {
+                //--------- yes entry ---------
+                $new_salary = $step->salary;
+                $new_exp = $step->expenditure+$exp;
+                $data_insert = array('case_id'=>$step->id,
         'round_id'=>1,
         'step_id'=>6,
         'action'=>0,
@@ -210,9 +205,9 @@ class Home extends CI_Controller
         'cash_in_hand' =>$step->cash_in_hand - ($exp),
         'expenditure' =>$new_exp,
         );
-        $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
-      }
-  }
-}
-}
+                $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
+            }
+          }
+        }
+    }
 }
