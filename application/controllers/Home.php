@@ -634,4 +634,47 @@ class Home extends CI_Controller
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
         }
     }
+    //======================= round 3 step 3 (buy reliance stock) ======================================
+    public function r3step3($in, $out)
+    {
+        $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>3,'step_id'=> 2));
+        foreach ($step_data->result() as $step) {
+            $buy = json_decode($step->buy);
+            $sell = json_decode($step->sell);
+            if (!empty($buy)) {
+                array_push($buy, 7);
+            } else {
+                $buy=array(7);
+            }
+            //--------- yes entry ---------
+            $new_cash_in_hand = $step->cash_in_hand +10000 + $step->pasive_income;
+            $new_exp = $step->expenditure+$out;
+            $data_insert = array('case_id'=>$step->id,
+            'round_id'=>3,
+            'step_id'=>2,
+            'action'=>1,
+            'salary'=>$step->salary,
+            'cash_in_hand' =>$new_cash_in_hand + ($in-$out),
+            'expenditure' =>$new_exp,
+            'pasive_income'=>$step->pasive_income-$in-$out,
+            'buy' =>json_encode($buy),
+            'sell'=>json_encode($sell),
+            );
+            $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
+            //--------- no entry ---------
+            $buy = json_decode($step->buy);
+            $data_insert = array('case_id'=>$step->id,
+            'round_id'=>3,
+            'step_id'=>2,
+            'action'=>2,
+            'salary'=>$step->salary,
+            'cash_in_hand' =>$new_cash_in_hand,
+            'expenditure' =>$step->expenditure,
+            'pasive_income'=>$step->pasive_income,
+            'buy' =>json_encode($buy),
+            'sell'=>json_encode($sell),
+            );
+            $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
+        }
+    }
 }
