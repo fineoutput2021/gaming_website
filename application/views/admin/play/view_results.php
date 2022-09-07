@@ -59,10 +59,10 @@
                       <td><?php echo $data->step_id?> </td>
                       <td><?php echo $data->action?> </td>
                       <td><?php echo $data->status?> </td>
-                      <td><?php echo $data->salary?> </td>
-                      <td><?php echo $data->cash_in_hand?> </td>
-                      <td><?php echo $data->expenditure?> </td>
-                      <td><?php echo $data->pasive_income?> </td>
+                      <td>₹<?php echo $data->salary?> </td>
+                      <td>₹<?php echo $data->cash_in_hand?> </td>
+                      <td>₹<?php echo $data->expenditure?> </td>
+                      <td>₹<?php if(!empty($data->pasive_income)){echo $data->pasive_income;}else{echo 0;}?> </td>
                     </tr>
                     <?php $i++; } ?>
                   </tbody>
