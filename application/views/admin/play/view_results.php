@@ -53,33 +53,42 @@
                   </thead>
                   <tbody>
                     <?php $i=1; foreach ($game_data->result() as $data) {
-                        $history = json_decode($data->history);
-                      ?>
+                    $history = json_decode($data->history); ?>
                     <tr>
                       <td><?php echo $i ?> </td>
                       <td><?php
-                      if(!empty($history)){
-                      foreach ($history as $key) {
-                      if($key==1){
-                        echo 'Yes,';
-                      }elseif($key==2){
-                          echo 'No,';
-                      }else{
-                        echo 'NA,';
-                      }
-                      }
-                    }
-                      ?> </td>
+                      if (!empty($history)) {
+                          foreach ($history as $key) {
+                              if ($key==1) {
+                                  echo 'Yes,';
+                              } elseif ($key==2) {
+                                  echo 'No,';
+                              } else {
+                                  echo 'NA,';
+                              }
+                          }
+                      } ?> </td>
                       <td><?php echo $data->round_id?> </td>
                       <td><?php echo $data->step_id?> </td>
-                      <td><?php if($data->action==1){echo 'Yes';}elseif($data->action==2){echo 'No';}else{echo 'NA';}?> </td>
+                      <td><?php if ($data->action==1) {
+                          echo 'Yes';
+                      } elseif ($data->action==2) {
+                          echo 'No';
+                      } else {
+                          echo 'NA';
+                      } ?> </td>
                       <td><?php echo ucfirst($data->status)?> </td>
                       <td>₹<?php echo $data->salary?> </td>
                       <td>₹<?php echo $data->cash_in_hand?> </td>
                       <td>₹<?php echo $data->expenditure?> </td>
-                      <td>₹<?php if(!empty($data->pasive_income)){echo $data->pasive_income;}else{echo 0;}?> </td>
+                      <td>₹<?php if (!empty($data->pasive_income)) {
+                          echo $data->pasive_income;
+                      } else {
+                          echo 0;
+                      } ?> </td>
                     </tr>
-                    <?php $i++; } ?>
+                    <?php $i++;
+                                               } ?>
                   </tbody>
                 </table>
               </div>

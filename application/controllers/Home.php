@@ -35,12 +35,12 @@ class Home extends CI_Controller
 
       //--------------- round 2---------------------------
         $this->r2step2(15000, 25000, $CH);// buy factory setup
-        // $this->r2step3(15000, 10000);// buy commercial setup
-        // $this->r2step4(5000);// buy stock asian paints
-        // $this->r2step5(15000);// gift
-        // $this->r2step6(50000);// sell youtube channel
-        // $this->r2step7(14000);// sell sell tcs stock
-        // $this->r2step8(20000);//  Loan Repayment
+        $this->r2step3(15000, 10000);// buy commercial setup
+        $this->r2step4(5000);// buy stock asian paints
+        $this->r2step5(15000);// gift
+        $this->r2step6(50000);// sell youtube channel
+        $this->r2step7(14000);// sell sell tcs stock
+        $this->r2step8(20000);//  Loan Repayment
 
       //--------------- round 3---------------------------
         // $this->r3step2(20000, 10000);// buy lab
