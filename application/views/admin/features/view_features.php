@@ -35,7 +35,7 @@
 
             <div class="panel-body">
               <div class="box-body table-responsive no-padding">
-                <table class="table table-bordered table-hover table-striped" id="userTable">
+                <table class="table table-bordered table-hover table-striped" id="userTable" data-page-length='50'>
                   <thead>
                     <tr>
                       <th>#</th>
@@ -48,7 +48,7 @@
                       <th>Message1</th>
                       <th>Message2</th>
                       <th>Message3</th>
-                      <?if($this->session->userdata('position')!='Manager'){?>
+                      <?if ($this->session->userdata('position')!='Manager') {?>
                       <th>Action</th>
                       <?}?>
                     </tr>

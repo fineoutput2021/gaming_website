@@ -45,6 +45,7 @@
             $('#userTable').dataTable({
               responsive: true,
               "bStateSave": true,
+              "aLengthMenu": [ 1000, 2000, 3000, 5000 ],
               "fnStateSave": function (oSettings, oData) {
                   localStorage.setItem('offersDataTables', JSON.stringify(oData));
               },
