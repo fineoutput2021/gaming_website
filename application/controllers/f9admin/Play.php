@@ -16,7 +16,7 @@ class Play extends CI_finecontrol
     public function view_results()
     {
         if (!empty($this->session->userdata('admin_data'))) {
-        $data['game_data'] = $this->db->get_where('tbl_game_cases', array('status'=>'survived','action is NOT NULL'=> NULL, FALSE));
+            $data['game_data'] = $this->db->get_where('tbl_game_cases', array('status'=>'survived','action is NOT NULL'=> null, false));
             $this->load->view('admin/common/header_view', $data);
             $this->load->view('admin/play/view_results');
             $this->load->view('admin/common/footer_view');

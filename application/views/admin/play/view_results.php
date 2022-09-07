@@ -40,6 +40,7 @@
                   <thead>
                     <tr>
                       <th>#</th>
+                      <th>Step History</th>
                       <th>Round</th>
                       <th>Step</th>
                       <th>Action</th>
@@ -52,13 +53,27 @@
                   </thead>
                   <tbody>
                     <?php $i=1; foreach ($game_data->result() as $data) {
+                        $history = json_decode($data->history);
                       ?>
                     <tr>
                       <td><?php echo $i ?> </td>
+                      <td><?php
+                      if(!empty($history)){
+                      foreach ($history as $key) {
+                      if($key==1){
+                        echo 'Yes,';
+                      }elseif($key==2){
+                          echo 'No,';
+                      }else{
+                        echo 'NA,';
+                      }
+                      }
+                    }
+                      ?> </td>
                       <td><?php echo $data->round_id?> </td>
                       <td><?php echo $data->step_id?> </td>
-                      <td><?php echo $data->action?> </td>
-                      <td><?php echo $data->status?> </td>
+                      <td><?php if($data->action==1){echo 'Yes';}elseif($data->action==2){echo 'No';}else{echo 'NA';}?> </td>
+                      <td><?php echo ucfirst($data->status)?> </td>
                       <td>₹<?php echo $data->salary?> </td>
                       <td>₹<?php echo $data->cash_in_hand?> </td>
                       <td>₹<?php echo $data->expenditure?> </td>

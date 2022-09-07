@@ -34,7 +34,7 @@ class Home extends CI_Controller
         $this->r1step6(10000);// Loan Repayment
 
       //--------------- round 2---------------------------
-        $this->r2step2(15000, 25000,$CH);// buy factory setup
+        $this->r2step2(15000, 25000, $CH);// buy factory setup
         // $this->r2step3(15000, 10000);// buy commercial setup
         // $this->r2step4(5000);// buy stock asian paints
         // $this->r2step5(15000);// gift
@@ -57,8 +57,8 @@ class Home extends CI_Controller
         //   $this->r4step4(150000);// sell lab
         //   $this->r4step5(20000);//  Loan Repayment
 
-          //-------- result ---------
-          $no_of_cases = $this->db->get_where('tbl_game_cases', array('status'=>'survived','action is NOT NULL'=> NULL, FALSE))->num_rows();
+        //-------- result ---------
+        $no_of_cases = $this->db->get_where('tbl_game_cases', array('status'=>'survived','action is NOT NULL'=> null, false))->num_rows();
 
         echo "Success! Check records <br />";
         echo "Number of Cases :- ".$no_of_cases;
@@ -113,6 +113,9 @@ class Home extends CI_Controller
     {
         $step_2_data = $this->db->get_where('tbl_game_cases', array('round_id'=>1,'step_id'=> 2,'status'=>'survived'))->result();
         foreach ($step_2_data as $step2) {
+            //-----step  history ----
+            $history=array($step2->action);
+
             //--------- yes entry ---------
             $buy = json_decode($step2->buy);
             if (!empty($buy)) {
@@ -130,6 +133,7 @@ class Home extends CI_Controller
             'cash_in_hand' =>$step2->cash_in_hand + ($in-$out),
             'expenditure' =>$new_exp,
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
             'status'=>'survived'
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -143,6 +147,7 @@ class Home extends CI_Controller
             'cash_in_hand' =>$step2->cash_in_hand,
             'expenditure' =>$step2->expenditure,
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
             'status'=>'survived'
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -154,6 +159,9 @@ class Home extends CI_Controller
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>1,'step_id'=> 3,'status'=>'survived'));
         foreach ($step_data->result() as $step) {
+            //-----step  history ----
+            $history = json_decode($step->history);
+            array_push($history, $step->action);
             //--------- yes entry ---------
             $buy = json_decode($step->buy);
             if (!empty($buy)) {
@@ -171,6 +179,7 @@ class Home extends CI_Controller
             'cash_in_hand' =>$step->cash_in_hand + ($in-$out),
             'expenditure' =>$new_exp,
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
             'status'=>'survived'
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -185,6 +194,7 @@ class Home extends CI_Controller
             'pasive_income'=>$step->pasive_income,
             'expenditure' =>$step->expenditure,
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
             'status'=>'survived'
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -196,6 +206,9 @@ class Home extends CI_Controller
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>1,'step_id'=> 4,'status'=>'survived'));
         foreach ($step_data->result() as $step) {
+            //-----step  history ----
+            $history = json_decode($step->history);
+            array_push($history, $step->action);
             if ($step->cash_in_hand > $exp) {
                 $buy = json_decode($step->buy);
                 //--------- yes entry ---------
@@ -211,6 +224,8 @@ class Home extends CI_Controller
                 'expenditure' =>$new_exp,
                 'pasive_income'=>$step->pasive_income,
                 'buy' =>json_encode($buy),
+                'history' =>json_encode($history),
+
                 );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             } else {
@@ -228,6 +243,8 @@ class Home extends CI_Controller
                 'expenditure' =>$new_exp,
                 'pasive_income'=>$step->pasive_income,
                 'buy' =>json_encode($buy),
+                'history' =>json_encode($history),
+
                 );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             }
@@ -239,6 +256,9 @@ class Home extends CI_Controller
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>1,'step_id'=> 5,'status'=>'survived'));
         foreach ($step_data->result() as $step) {
+            //-----step  history ----
+            $history = json_decode($step->history);
+            array_push($history, $step->action);
             $buy = json_decode($step->buy);
             if ($step->cash_in_hand >= $exp) {
                 //--------- yes entry ---------
@@ -253,6 +273,7 @@ class Home extends CI_Controller
                     'expenditure' =>$new_exp,
                     'pasive_income'=>$step->pasive_income,
                     'buy' =>json_encode($buy),
+                    'history' =>json_encode($history),
                     'status'=>'survived'
                     );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -266,6 +287,7 @@ class Home extends CI_Controller
                     'pasive_income'=>$step->pasive_income,
                     'expenditure' =>$step->expenditure,
                     'buy' =>json_encode($buy),
+                    'history' =>json_encode($history),
                     'status'=>'survived'
           );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -280,6 +302,7 @@ class Home extends CI_Controller
                     'expenditure' =>$step->expenditure,
                     'pasive_income'=>$step->pasive_income,
                     'buy' =>json_encode($buy),
+                    'history' =>json_encode($history),
                     'status'=>'survived'
                     );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -291,10 +314,13 @@ class Home extends CI_Controller
 
     //====================================================== START ROUND 2 ==========================================================
     //======================= round 2 step 2 (buy factory setup) ======================================
-    public function r2step2($in, $out,$ch)
+    public function r2step2($in, $out, $ch)
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>1,'step_id'=> 6,'status'=>'survived'));
         foreach ($step_data->result() as $step) {
+            //-----step  history ----
+            $history = json_decode($step->history);
+            array_push($history, $step->action);
             $buy = json_decode($step->buy);
             if (!empty($buy)) {
                 array_push($buy, 4);
@@ -313,6 +339,8 @@ class Home extends CI_Controller
             'expenditure' =>$new_exp,
             'pasive_income'=>$step->pasive_income+($in-$out),
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
+
             'status'=>'survived'
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -327,6 +355,8 @@ class Home extends CI_Controller
             'expenditure' =>$step->expenditure,
             'pasive_income'=>$step->pasive_income,
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
+
             'status'=>'survived'
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -337,7 +367,10 @@ class Home extends CI_Controller
     public function r2step3($in, $out)
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>2,'step_id'=> 2,'status'=>'survived'));
-        foreach ($step_data->result() as $step) {
+        foreach ($step_data->result() as $step) {  //-----step  history ----
+            $history = json_decode($step->history);
+            array_push($history, $step->action);
+
             $buy = json_decode($step->buy);
             if (!empty($buy)) {
                 array_push($buy, 5);
@@ -356,6 +389,8 @@ class Home extends CI_Controller
             'expenditure' =>$new_exp,
             'pasive_income'=>$step->pasive_income+($in-$out),
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
+
             'status'=>'survived'
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -370,6 +405,8 @@ class Home extends CI_Controller
             'expenditure' =>$step->expenditure,
             'pasive_income'=>$step->pasive_income,
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
+
             'status'=>'survived'
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -381,6 +418,9 @@ class Home extends CI_Controller
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>2,'step_id'=> 3,'status'=>'survived'));
         foreach ($step_data->result() as $step) {
+            //-----step  history ----
+            $history = json_decode($step->history);
+            array_push($history, $step->action);
             $buy = json_decode($step->buy);
             $new_cash_in_hand = $step->cash_in_hand;
             if ($new_cash_in_hand > $bp) {
@@ -399,6 +439,8 @@ class Home extends CI_Controller
             'cash_in_hand' =>$new_cash_in_hand - ($bp),
             'expenditure' =>$new_exp,
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
+
             'pasive_income'=>$step->pasive_income,
               'status'=>'survived',
             );
@@ -414,6 +456,8 @@ class Home extends CI_Controller
             'expenditure' =>$step->expenditure,
             'pasive_income'=>$step->pasive_income,
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
+
               'status'=>'survived',
             );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -429,6 +473,8 @@ class Home extends CI_Controller
           'expenditure' =>$step->expenditure,
           'pasive_income'=>$step->pasive_income,
           'buy' =>json_encode($buy),
+          'history' =>json_encode($history),
+
             'status'=>'out',
           );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -441,6 +487,9 @@ class Home extends CI_Controller
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>2,'step_id'=> 4,'status'=>'survived'));
         foreach ($step_data->result() as $step) {
+            //-----step  history ----
+            $history = json_decode($step->history);
+            array_push($history, $step->action);
             $buy = json_decode($step->buy);
             //--------- yes entry ---------
             $new_exp = $step->expenditure;
@@ -453,6 +502,8 @@ class Home extends CI_Controller
             'expenditure' =>$new_exp,
             'buy' =>json_encode($buy),
             'pasive_income'=>$step->pasive_income,
+            'history' =>json_encode($history),
+
             'status'=>'survived'
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -464,6 +515,9 @@ class Home extends CI_Controller
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>2,'step_id'=> 5,'status'=>'survived'));
         foreach ($step_data->result() as $step) {
+            //-----step  history ----
+            $history = json_decode($step->history);
+            array_push($history, $step->action);
             $buy = json_decode($step->buy);
             if (!empty($buy)) {
                 if (in_array(2, $buy)) {
@@ -480,6 +534,8 @@ class Home extends CI_Controller
             'buy' =>json_encode($buy),
             'pasive_income'=>$step->pasive_income-(10000-5000),
             'sell'=>json_encode($sell),
+            'history' =>json_encode($history),
+
             'status'=>'survived'
             );
                     $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -493,6 +549,8 @@ class Home extends CI_Controller
             'cash_in_hand' =>$step->cash_in_hand,
             'expenditure' =>$new_exp,
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
+
             'pasive_income'=>$step->pasive_income,
             'status'=>'survived'
             );
@@ -506,6 +564,8 @@ class Home extends CI_Controller
             'cash_in_hand' =>$step->cash_in_hand,
             'expenditure' =>$new_exp,
             'buy' =>json_encode($buy),
+            'history' =>json_encode($history),
+
             'pasive_income'=>$step->pasive_income,
             'status'=>'survived'
             );
@@ -520,6 +580,8 @@ class Home extends CI_Controller
                 'cash_in_hand' =>$step->cash_in_hand,
                 'expenditure' =>$new_exp,
                 'buy' =>json_encode($buy),
+                'history' =>json_encode($history),
+
                 'pasive_income'=>$step->pasive_income,
                 'status'=>'survived'
                 );
@@ -533,6 +595,9 @@ class Home extends CI_Controller
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>2,'step_id'=> 6,'status'=>'survived'));
         foreach ($step_data->result() as $step) {
+            //-----step  history ----
+            $history = json_decode($step->history);
+            array_push($history, $step->action);
             $buy = json_decode($step->buy);
             $sell = json_decode($step->sell);
             if (!empty($buy)) {
@@ -554,6 +619,8 @@ class Home extends CI_Controller
             'buy' =>json_encode($buy),
             'pasive_income'=>$step->pasive_income,
             'sell'=>json_encode($sell),
+            'history' =>json_encode($history),
+
             'status'=>'survived'
             );
                     $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -570,6 +637,8 @@ class Home extends CI_Controller
             'buy' =>json_encode($buy),
             'pasive_income'=>$step->pasive_income,
             'sell'=>json_encode($sell),
+            'history' =>json_encode($history),
+
             'status'=>'survived'
             );
                     $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -584,6 +653,8 @@ class Home extends CI_Controller
                 'buy' =>json_encode($buy),
                 'pasive_income'=>$step->pasive_income,
                 'sell'=>json_encode($sell),
+                'history' =>json_encode($history),
+
                 'status'=>'survived'
                 );
                     $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -599,6 +670,8 @@ class Home extends CI_Controller
             'buy' =>json_encode($buy),
             'pasive_income'=>$step->pasive_income,
             'sell'=>json_encode($sell),
+            'history' =>json_encode($history),
+
             'status'=>'survived'
             );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -611,6 +684,9 @@ class Home extends CI_Controller
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>2,'step_id'=> 7,'status'=>'survived'));
         foreach ($step_data->result() as $step) {
+            //-----step  history ----
+            $history = json_decode($step->history);
+            array_push($history, $step->action);
             $buy = json_decode($step->buy);
             $sell = json_decode($step->sell);
             if ($step->cash_in_hand > $exp) {
@@ -627,6 +703,8 @@ class Home extends CI_Controller
                     'pasive_income'=>$step->pasive_income,
                     'buy' =>json_encode($buy),
                     'sell'=>json_encode($sell),
+                    'history' =>json_encode($history),
+
                     'status'=>'survived'
                     );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -641,6 +719,8 @@ class Home extends CI_Controller
                     'expenditure' =>$step->expenditure,
                     'buy' =>json_encode($buy),
                     'sell'=>json_encode($sell),
+                    'history' =>json_encode($history),
+
                     'status'=>'survived'
           );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -656,6 +736,8 @@ class Home extends CI_Controller
                     'pasive_income'=>$step->pasive_income,
                     'buy' =>json_encode($buy),
                     'sell'=>json_encode($sell),
+                    'history' =>json_encode($history),
+
                     'status'=>'out'
                     );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -1340,5 +1422,4 @@ class Home extends CI_Controller
         return;
     }
     //====================================================== END ROUND 4 ==========================================================
-
 }
