@@ -26,11 +26,14 @@
   /* ==============================Custom theme=========================================== */
   .custom_btn{
     color: white;
-    background-color: hsl(353deg 91% 53%);
+    background-color: black;
   }
   .custom_btn:hover{
     color: white;
-    background-color: black;
+    background-color: #d72020;
+  }
+  .custom_btn:focus{
+    color: white;
   }
   .custom_header{
     color: white;

@@ -59,7 +59,7 @@
                     <tr>
                       <td> <strong>Title</strong> <span style="color:red;">*</span></strong> </td>
                       <td>
-                        <input type="text" name="title" class="form-control" placeholder="" required value="<?=$features_data->title?>" />
+                        <input type="text" name="title" class="form-control" placeholder="" readonly required value="<?=$features_data->title?>" />
                       </td>
                     </tr>
                     <tr>

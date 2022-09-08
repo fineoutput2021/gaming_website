@@ -1,11 +1,11 @@
 <div class="content-wrapper">
   <section class="content-header">
     <h1>
-      Game Features
+      Game Settings
     </h1>
     <ol class="breadcrumb">
       <li><a href="<?php echo base_url() ?>dcadmin/Home"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-      <li><a href="<?php echo base_url() ?>dcadmin/Features/view_features"><i class="fa fa-undo" aria-hidden="true"></i> View Game Features </a></li>
+      <li><a href="<?php echo base_url() ?>dcadmin/Features/view_settings"><i class="fa fa-undo" aria-hidden="true"></i> View Game Settings </a></li>
       <!-- <li class="active"></li> -->
     </ol>
   </section>
@@ -14,7 +14,7 @@
       <div class="col-lg-12">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title"><i class="fa fa-money fa-fw"></i>View Game Features</h3>
+            <h3 class="panel-title"><i class="fa fa-money fa-fw"></i>View Game Settings</h3>
           </div>
           <div class="panel panel-default">
 
@@ -38,37 +38,27 @@
                   <thead >
                     <tr>
                       <th>#</th>
-                      <th>Round</th>
-                      <th>Step</th>
-                      <th>Offer</th>
-                      <th>Title</th>
-                      <th>Inflow</th>
-                      <th>Outflow</th>
-                      <th>Message1</th>
-                      <th>Message2</th>
-                      <th>Message3</th>
+                      <th>Salary</th>
+                      <th>Personal Expense</th>
+                      <th>Loan Expense</th>
+                      <th>Cash In Hand</th>
                       <?if ($this->session->userdata('position')!='Manager') {?>
                       <th>Action</th>
                       <?}?>
                     </tr>
                   </thead>
                   <tbody>
-                    <?php $i=1; foreach ($features_data->result() as $data) { ?>
+                    <?php $i=1; foreach ($setting_data->result() as $data) { ?>
                     <tr>
                       <td><?php echo $i ?> </td>
-                      <td><?php echo $data->round ?> </td>
-                      <td><?php echo $data->step ?> </td>
-                      <td><?php echo $data->offer ?> </td>
-                      <td><?php echo $data->title ?> </td>
-                      <td><?php echo $data->inflow ?> </td>
-                      <td><?php echo $data->outflow ?> </td>
-                      <td><?php echo $data->msg1 ?> </td>
-                      <td><?php echo $data->msg2 ?> </td>
-                      <td><?php echo $data->msg3 ?> </td>
+                      <td>₹<?php echo $data->salary ?> </td>
+                      <td>₹<?php echo $data->personal_exp ?> </td>
+                      <td>₹<?php echo $data->loan_exp ?> </td>
+                      <td>₹<?php echo $data->salary - ($data->personal_exp+$data->loan_exp) ?> </td>
                       <td>
                         <div class="btn-group" id="btns<?php echo $i ?>">
                           <div class="btn-group">
-                            <a href="<?php echo base_url() ?>dcadmin/Features/update_feature/<?php echo
+                            <a href="<?php echo base_url() ?>dcadmin/Features/update_setting/<?php echo
                             base64_encode($data->id) ?>"><button type="button" class="btn btn-default dropdown-toggle">
                                 Edit</span></button></a>
                           </div>

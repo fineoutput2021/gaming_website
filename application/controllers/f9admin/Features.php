@@ -78,7 +78,6 @@ class Features extends CI_finecontrol
                     $ip = $this->input->ip_address();
                     date_default_timezone_set("Asia/Calcutta");
                     $cur_date=date("Y-m-d H:i:s");
-
                     $addedby=$this->session->userdata('admin_id');
 
                     $idw=base64_decode($idd);
@@ -92,6 +91,9 @@ class Features extends CI_finecontrol
                     'msg1'=>$msg1,
                     'msg2'=>$msg2,
                     'msg3'=>$msg3,
+                    'ip'=>$ip,
+                    'last_updated_date'=>$cur_date,
+                    'updated_by'=>$addedby,
 
                     );
                     $this->db->where('id', $idw);
@@ -99,6 +101,96 @@ class Features extends CI_finecontrol
                     if ($last_id!=0) {
                         $this->session->set_flashdata('smessage', 'Data updated successfully');
                         redirect("dcadmin/Features/view_features", "refresh");
+                    } else {
+                        $this->session->set_flashdata('emessage', 'Sorry error occured');
+                        redirect($_SERVER['HTTP_REFERER']);
+                    }
+                } else {
+                    $this->session->set_flashdata('emessage', validation_errors());
+                    redirect($_SERVER['HTTP_REFERER']);
+                }
+            } else {
+                $this->session->set_flashdata('emessage', 'Please insert some data, No data available');
+                redirect($_SERVER['HTTP_REFERER']);
+            }
+        } else {
+            redirect("login/admin_login", "refresh");
+        }
+    }
+    //================================ VIEW SETTING ============================================
+    public function view_settings()
+    {
+        if (!empty($this->session->userdata('admin_data'))) {
+            $this->db->select('*');
+            $this->db->from('tbl_setting');
+            $data['setting_data']= $this->db->get();
+
+            $this->load->view('admin/common/header_view', $data);
+            $this->load->view('admin/setting/view_settings');
+            $this->load->view('admin/common/footer_view');
+        } else {
+            redirect("login/admin_login", "refresh");
+        }
+    }
+    //================================ VIEW UPDATE SETTING ============================================
+    public function update_setting($idd)
+    {
+        if (!empty($this->session->userdata('admin_data'))) {
+            $id=base64_decode($idd);
+            $data['id']=$idd;
+
+            $this->db->select('*');
+            $this->db->from('tbl_setting');
+            $this->db->where('id', $id);
+            $data['setting_data']= $this->db->get()->row();
+
+            $this->load->view('admin/common/header_view', $data);
+            $this->load->view('admin/setting/update_setting');
+            $this->load->view('admin/common/footer_view');
+        } else {
+            redirect("login/admin_login", "refresh");
+        }
+    }
+    //================================ UPDATE SETTING DATA ============================================
+    public function update_setting_data($idd)
+    {
+        if (!empty($this->session->userdata('admin_data'))) {
+            $this->load->helper(array('form', 'url'));
+            $this->load->library('form_validation');
+            $this->load->helper('security');
+            if ($this->input->post()) {
+                $this->form_validation->set_rules('salary', 'salary', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('personal_exp', 'personal_exp', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('loan_exp', 'loan_exp', 'required|trim|xss_clean');
+                if ($this->form_validation->run()== true) {
+                    $salary=$this->input->post('salary');
+                    $personal_exp=$this->input->post('personal_exp');
+                    $loan_exp=$this->input->post('loan_exp');
+
+                    $ip = $this->input->ip_address();
+                    date_default_timezone_set("Asia/Calcutta");
+                    $cur_date=date("Y-m-d H:i:s");
+
+                    $addedby=$this->session->userdata('admin_id');
+
+                    $idw=base64_decode($idd);
+                    $ip = $this->input->ip_address();
+                    date_default_timezone_set("Asia/Calcutta");
+                    $cur_date=date("Y-m-d H:i:s");
+                    $addedby=$this->session->userdata('admin_id');
+                    $data_insert = array('salary'=>$salary,
+                    'personal_exp'=>$personal_exp,
+                    'loan_exp'=>$loan_exp,
+                    'ip'=>$ip,
+                    'last_updated_date'=>$cur_date,
+                    'updated_by'=>$addedby,
+
+                    );
+                    $this->db->where('id', $idw);
+                    $last_id=$this->db->update('tbl_setting', $data_insert);
+                    if ($last_id!=0) {
+                        $this->session->set_flashdata('smessage', 'Data updated successfully');
+                        redirect("dcadmin/Features/view_settings", "refresh");
                     } else {
                         $this->session->set_flashdata('emessage', 'Sorry error occured');
                         redirect($_SERVER['HTTP_REFERER']);

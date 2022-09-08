@@ -33,7 +33,6 @@
               <?php echo $this->session->flashdata('emessage'); ?>
             </div>
             <?php } ?>
-
             <div class="panel-body">
               <div class="box-body table-responsive no-padding">
                 <table class="table table-bordered table-hover table-striped" id="userTable">
@@ -43,17 +42,25 @@
                       <th>Step History</th>
                       <th>Round</th>
                       <th>Step</th>
+                      <th>Title</th>
                       <th>Action</th>
                       <th>Status</th>
                       <th>Salary</th>
                       <th>Cash In Hand</th>
-                      <th>Expenditure</th>
+                      <th>Personal Expense</th>
+                      <th>Loan Expense</th>
                       <th>Passive Income</th>
+                      <th>Buy</th>
+                      <th>Sell</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php $i=1; foreach ($game_data->result() as $data) {
-                    $history = json_decode($data->history); ?>
+                    $step_info = $this->db->get_where('tbl_features', array('round'=> $data->round_id,'step'=> $data->step_id))->result();
+                    $history = json_decode($data->history);
+                    $buy = json_decode($data->buy);
+                    $sell = json_decode($data->sell);
+                    ?>
                     <tr>
                       <td><?php echo $i ?> </td>
                       <td><?php
@@ -70,6 +77,7 @@
                       } ?> </td>
                       <td><?php echo $data->round_id?> </td>
                       <td><?php echo $data->step_id?> </td>
+                      <td><?php echo $step_info[0]->title?> </td>
                       <td><?php if ($data->action==1) {
                           echo 'Yes';
                       } elseif ($data->action==2) {
@@ -80,11 +88,54 @@
                       <td><?php echo ucfirst($data->status)?> </td>
                       <td>₹<?php echo $data->salary?> </td>
                       <td>₹<?php echo $data->cash_in_hand?> </td>
-                      <td>₹<?php echo $data->expenditure?> </td>
-                      <td>₹<?php if (!empty($data->pasive_income)) {
-                          echo $data->pasive_income;
+                      <td>₹<?php echo $data->personal_exp?> </td>
+                      <td>₹<?php echo $data->loan_exp?> </td>
+                      <td>₹<?php if (!empty($data->passive_income)) {
+                          echo $data->passive_income;
                       } else {
                           echo 0;
+                      } ?> </td>
+                      <td><?php
+                      if (!empty($buy)) {
+                          foreach ($buy as $key) {
+                              if ($key==1) {
+                                  echo 'TCS Stock,';
+                              } elseif ($key==2) {
+                                  echo 'Youtube Channel,';
+                              } elseif ($key==3) {
+                                  echo 'Real Estate,';
+                              } elseif ($key==4) {
+                                  echo 'Factory Setup,';
+                              } elseif ($key==5) {
+                                  echo 'Commercial Setup,';
+                              } elseif ($key==6) {
+                                  echo 'Asian Paint Stock,';
+                              }elseif ($key==7) {
+                                  echo 'Diagnostic Lab,';
+                              }elseif ($key==8) {
+                                  echo 'Realiance Stock,';
+                              }elseif ($key==9) {
+                                  echo 'Land,';
+                              }
+                          }
+                      } ?> </td>
+                      <td><?php
+                      if (!empty($sell)) {
+                          foreach ($sell as $key) {
+                              if ($key==1) {
+                                  echo 'Youtube Channel,';
+                              } elseif ($key==2) {
+                                  echo 'TCS Stock,';
+                              } elseif ($key==3) {
+                                  echo 'Asian Paint Stock,';
+                              } elseif ($key==4) {
+                                  echo 'Commercial Setup,';
+                              } elseif ($key==5) {
+                                  echo 'Land,';
+                              } elseif ($key==6) {
+                                  echo 'Diagnostic Lab,';
+                              }
+                          }
                       } ?> </td>
                     </tr>
                     <?php $i++;
