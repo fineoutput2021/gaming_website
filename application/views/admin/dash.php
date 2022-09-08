@@ -2,7 +2,8 @@
 $no_of_cases = $this->db->get_where('tbl_game_cases', array('action is NOT NULL'=> null, false))->num_rows();
 $no_of_winner = $this->db->get_where('tbl_game_cases', array('status'=> 'winner'))->num_rows();
 $no_of_losser = $this->db->get_where('tbl_game_cases', array('status'=> 'losser'))->num_rows();
-
+// $winner_percetage= $no_of_winner * 100 /$no_of_cases;
+// $losser_percetage= $no_of_losser * 100 /$no_of_cases;
 ?>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">

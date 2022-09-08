@@ -5,7 +5,7 @@
     </h1>
     <ol class="breadcrumb">
       <li><a href="<?php echo base_url() ?>dcadmin/Home"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-      <li><a href="<?php echo base_url() ?>dcadmin/Banner/view_banner"><i class="fa fa-undo" aria-hidden="true"></i> View   Game Results </a></li>
+      <li><a href="<?php echo base_url() ?>dcadmin/Play/view_results"><i class="fa fa-undo" aria-hidden="true"></i> View   Game Results </a></li>
       <!-- <li class="active"></li> -->
     </ol>
   </section>
@@ -34,8 +34,14 @@
             </div>
             <?php } ?>
             <div class="panel-body">
+              <div style="display:flex;justify-content:flex-end">
+                <form action="<?=base_url()?>dcadmin/Play/search" method="get">
+                  <input name="string" class="form-control" placeholder="search" style="margin-bottom: 5px;display: inline-flex;width: 71%;"/>
+                  <button type="submit" class="btn custom_btn">Search</button>
+                </form>
+              </div>
               <div class="box-body table-responsive no-padding">
-                <table class="table table-bordered table-hover table-striped" id="userTable">
+                <table class="table table-bordered table-hover table-striped" >
                   <thead>
                     <tr>
                       <th>#</th>
@@ -55,26 +61,14 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <?php $i=1; foreach ($game_data->result() as $data) {
+                    <?php foreach ($game_data->result() as $data) {
                     $step_info = $this->db->get_where('tbl_features', array('round'=> $data->round_id,'step'=> $data->step_id))->result();
-                    $history = json_decode($data->history);
                     $buy = json_decode($data->buy);
                     $sell = json_decode($data->sell);
                     ?>
                     <tr>
                       <td><?php echo $i ?> </td>
-                      <td><?php
-                      if (!empty($history)) {
-                          foreach ($history as $key) {
-                              if ($key==1) {
-                                  echo 'Yes,';
-                              } elseif ($key==2) {
-                                  echo 'No,';
-                              } else {
-                                  echo 'NA,';
-                              }
-                          }
-                      } ?> </td>
+                      <td><?php echo $data->summary ?> </td>
                       <td><?php echo $data->round_id?> </td>
                       <td><?php echo $data->step_id?> </td>
                       <td><?php echo $step_info[0]->title?> </td>
@@ -142,6 +136,9 @@
                                                } ?>
                   </tbody>
                 </table>
+                <div class="b-diw" style="list-style-type:none;display: flex;justify-content: center;">
+            <?php echo $links; ?>
+            </div>
               </div>
             </div>
           </div>
