@@ -80,17 +80,15 @@ class Play extends CI_finecontrol
         if (!empty($this->session->userdata('admin_data'))) {
             $this->db->truncate('tbl_game_cases');// --------- table truncate
             //---- get setting info --
-            $setting_info = $this->db->get_where('tbl_setting')->result();
-            $CH = $setting_info[0]->salary-($setting_info[0]->personal_exp+$setting_info[0]->loan_exp);
             //--------------- round 1---------------------------
-            $this->r1step2($setting_info);// buy tcs stock
+            $this->r1step2();// buy tcs stock
             $this->r1step3();//---- buy youtube channel
             $this->r1step4();// buy real state
             $this->r1step5();// fixed medical expense
             $this->r1step6();// Loan Repayment
 
           //--------------- round 2---------------------------
-            $this->r2step2($CH);// buy factory setup
+            $this->r2step2();// buy factory setup
             $this->r2step3();// buy commercial setup
             $this->r2step4();// buy stock asian paints
             $this->r2step5();// gift
@@ -99,7 +97,7 @@ class Play extends CI_finecontrol
             $this->r2step8();//  Loan Repayment
 
            //--------------- round 3---------------------------
-            $this->r3step2($CH);// buy lab
+            $this->r3step2();// buy lab
             $this->r3step3();//  buy reliance stock
             $this->r3step4();//  buy land
             $this->r3step5();// fixed child expense
@@ -108,7 +106,7 @@ class Play extends CI_finecontrol
             $this->r3step8();//  Loan Repayment
 
              //--------------- round 4 ---------------------------
-              $this->r4step2($CH);// chance donation received
+              $this->r4step2();// chance donation received
               $this->r4step3();// sell land
               $this->r4step4();// sell lab
               $this->r4step5();//  Loan Repayment
@@ -122,8 +120,9 @@ class Play extends CI_finecontrol
     }
     //====================================================== START ROUND 1 ==========================================================
     //======================= round 1 step 2 (buy tcs stock) ======================================
-    public function r1step2($setting_info)
+    public function r1step2()
     {
+      $setting_info = $this->db->get_where('tbl_setting')->result();
         $salary = $setting_info[0]->salary;
         $personal_exp = $setting_info[0]->personal_exp;
         $loan_exp = $setting_info[0]->loan_exp;
@@ -391,7 +390,7 @@ class Play extends CI_finecontrol
 
     //====================================================== START ROUND 2 ==========================================================
     //======================= round 2 step 2 (buy factory setup) ======================================
-    public function r2step2($ch)
+    public function r2step2()
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>1,'step_id'=> 6,'status'=>'survived'));
         //---- get step info --
@@ -406,8 +405,9 @@ class Play extends CI_finecontrol
             } else {
                 $buy=array(4);
             }
+            $salary =$step->salary - ($step->personal_exp + $step->loan_exp);
+            $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             //--------- yes entry ---------
-            $new_cash_in_hand = $step->cash_in_hand + $ch + $step->passive_income;
             $loan_exp = $step->loan_exp+$out;
             $data_insert = array('case_id'=>$step->id,
             'round_id'=>2,
@@ -826,7 +826,7 @@ class Play extends CI_finecontrol
 
     //====================================================== START ROUND 3 ==========================================================
     //======================= round 3 step 2 (buy lab) ======================================
-    public function r3step2($CH)
+    public function r3step2()
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>2,'step_id'=> 8,'status'=>'survived'));
         //---- get step info --
@@ -834,8 +834,8 @@ class Play extends CI_finecontrol
         $in =$step_info[0]->inflow;
         $out =$step_info[0]->outflow;
         foreach ($step_data->result() as $step) {
-            //-----step  history ----
-            $new_cash_in_hand = $step->cash_in_hand +$CH + $step->passive_income;
+            $salary =$step->salary - ($step->personal_exp + $step->loan_exp);
+            $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             $buy = json_decode($step->buy);
             $sell = json_decode($step->sell);
             if ($new_cash_in_hand>0) {
@@ -1329,14 +1329,15 @@ class Play extends CI_finecontrol
 
     //====================================================== START ROUND 4 ==========================================================
     //======================= round 4 step 2 (chance donation received) ======================================
-    public function r4step2($CH)
+    public function r4step2()
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>3,'step_id'=> 8,'status'=>'survived'));
         //---- get step info --
         $step_info = $this->db->get_where('tbl_features', array('round'=> 4,'step'=> 2))->result();
         $amount =$step_info[0]->inflow;
         foreach ($step_data->result() as $step) {
-            $new_cash_in_hand = $step->cash_in_hand +$CH + $step->passive_income;
+          $salary =$step->salary - ($step->personal_exp + $step->loan_exp);
+          $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             //--------- yes entry ---------
             $data_insert = array('case_id'=>$step->id,
         'round_id'=>4,
