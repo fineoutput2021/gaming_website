@@ -645,7 +645,7 @@ class Play extends CI_finecontrol
                     'personal_exp' =>$step->personal_exp,
                     'loan_exp' =>$step->loan_exp,
                     'buy' =>json_encode($buy),
-                    'summary' =>$step->summary,
+                    'summary' =>$step->summary.",NA",
                     'passive_income'=>$step->passive_income,
                     'status'=>'survived'
                     );
@@ -660,7 +660,7 @@ class Play extends CI_finecontrol
                 'personal_exp' =>$step->personal_exp,
                 'loan_exp' =>$step->loan_exp,
                 'buy' =>json_encode($buy),
-                'summary' =>$step->summary,
+                'summary' =>$step->summary.",NA",
                 'passive_income'=>$step->passive_income,
                 'status'=>'survived'
                 );
@@ -731,7 +731,7 @@ class Play extends CI_finecontrol
                     'buy' =>json_encode($buy),
                     'passive_income'=>$step->passive_income,
                     'sell'=>json_encode($sell),
-                    'summary' =>$step->summary,
+                    'summary' =>$step->summary.",NA",
                     'status'=>'survived'
                     );
                     $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -747,7 +747,7 @@ class Play extends CI_finecontrol
                 'buy' =>json_encode($buy),
                 'passive_income'=>$step->passive_income,
                 'sell'=>json_encode($sell),
-                'summary' =>$step->summary,
+                'summary' =>$step->summary.",NA",
                 'status'=>'survived'
                 );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -1141,7 +1141,7 @@ class Play extends CI_finecontrol
         'step_id'=>6,
         'salary'=>$step->salary,
         'cash_in_hand' =>$step->cash_in_hand,
-        'summary' =>$step->summary,
+        'summary' =>$step->summary.",NA",
         'personal_exp' =>$step->personal_exp,
         'loan_exp' =>$step->loan_exp,
         'buy' =>json_encode($buy),
@@ -1157,7 +1157,7 @@ class Play extends CI_finecontrol
             'step_id'=>6,
             'salary'=>$step->salary,
             'cash_in_hand' =>$step->cash_in_hand,
-            'summary' =>$step->summary,
+            'summary' =>$step->summary.",NA",
             'personal_exp' =>$step->personal_exp,
             'loan_exp' =>$step->loan_exp,
             'buy' =>json_encode($buy),
@@ -1229,7 +1229,7 @@ class Play extends CI_finecontrol
         'step_id'=>7,
         'salary'=>$step->salary,
         'cash_in_hand' =>$step->cash_in_hand,
-        'summary' =>$step->summary,
+        'summary' =>$step->summary.",NA",
         'personal_exp' =>$step->personal_exp,
         'loan_exp' =>$step->loan_exp,
         'buy' =>json_encode($buy),
@@ -1251,7 +1251,7 @@ class Play extends CI_finecontrol
             'passive_income'=>$step->passive_income,
             'status'=>'survived',
             'sell'=>json_encode($sell),
-            'summary' =>$step->summary,
+            'summary' =>$step->summary.",NA",
             );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             }
@@ -1415,7 +1415,7 @@ class Play extends CI_finecontrol
                 'step_id'=>3,
         'salary'=>$step->salary,
         'cash_in_hand' =>$step->cash_in_hand,
-          'summary' =>$step->summary,
+        'summary' =>$step->summary.",NA",
           'personal_exp' =>$step->personal_exp,
           'loan_exp' =>$step->loan_exp,
         'buy' =>json_encode($buy),
@@ -1431,7 +1431,7 @@ class Play extends CI_finecontrol
             'step_id'=>3,
             'salary'=>$step->salary,
             'cash_in_hand' =>$step->cash_in_hand,
-              'summary' =>$step->summary,
+            'summary' =>$step->summary.",NA",
             'personal_exp' =>$step->personal_exp,
             'loan_exp' =>$step->loan_exp,
             'buy' =>json_encode($buy),
@@ -1503,7 +1503,7 @@ class Play extends CI_finecontrol
                 'step_id'=>4,
         'salary'=>$step->salary,
         'cash_in_hand' =>$step->cash_in_hand,
-          'summary' =>$step->summary,
+        'summary' =>$step->summary.",NA",
         'personal_exp' =>$step->personal_exp,
         'loan_exp' =>$step->loan_exp,
         'buy' =>json_encode($buy),
@@ -1519,7 +1519,7 @@ class Play extends CI_finecontrol
             'step_id'=>4,
             'salary'=>$step->salary,
             'cash_in_hand' =>$step->cash_in_hand,
-              'summary' =>$step->summary,
+            'summary' =>$step->summary.",NA",
             'personal_exp' =>$step->personal_exp,
             'loan_exp' =>$step->loan_exp,
             'buy' =>json_encode($buy),
