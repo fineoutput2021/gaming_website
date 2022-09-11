@@ -22,7 +22,7 @@ class Play extends CI_finecontrol
 
             // echo count;
             $config['base_url'] = base_url().'dcadmin/Play/view_results/';
-            $per_page = 1000;
+            $per_page = 500;
             $config['total_rows'] = $count;
             $config['per_page'] = $per_page;
             $config['num_links'] = 5;
@@ -1297,7 +1297,7 @@ class Play extends CI_finecontrol
                 'passive_income'=>$step->passive_income,
                 'summary' =>$step->summary.",No",
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$loan_exp,
+                'loan_exp' =>$step->loan_exp,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
                 'status'=>'survived'
@@ -1313,7 +1313,7 @@ class Play extends CI_finecontrol
                 'cash_in_hand' =>$step->cash_in_hand - ($exp),
                 'summary' =>$step->summary.",Yes",
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$loan_exp,
+                'loan_exp' =>$step->loan_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
