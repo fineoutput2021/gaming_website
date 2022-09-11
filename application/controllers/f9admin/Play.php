@@ -1630,6 +1630,7 @@ class Play extends CI_finecontrol
     //================================= EXPORT RESULT DATA INTO EXCEL =========================
     public function export_result_data()
     {
+      ini_set('memory_limit', '2048M');
         require_once APPPATH . "/third_party/PHPExcel.php"; //------ INCLUDE EXCEL
         $object = new PHPExcel();
 
