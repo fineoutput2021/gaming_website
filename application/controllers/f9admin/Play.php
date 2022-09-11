@@ -1732,7 +1732,7 @@ class Play extends CI_finecontrol
         $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="Results_data('.$cur_date.').xls"');
-        ob_end_clean();
+        // ob_end_clean();
         $object_writer->save('php://output');
     }
 }
