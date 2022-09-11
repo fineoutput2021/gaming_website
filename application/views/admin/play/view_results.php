@@ -34,7 +34,8 @@
             </div>
             <?php } ?>
             <div class="panel-body">
-              <div style="display:flex;justify-content:flex-end">
+              <div style="display:flex;justify-content:space-between">
+                <a href="<?=base_url()?>dcadmin/Play/export_result_data"><button type="button" class="btn custom_btn">Download Excel</button></a>
                 <form action="<?=base_url()?>dcadmin/Play/search" method="get">
                   <input name="string" class="form-control" placeholder="search" style="margin-bottom: 5px;display: inline-flex;width: 71%;"/>
                   <button type="submit" class="btn custom_btn">Search</button>

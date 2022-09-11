@@ -34,6 +34,12 @@
             </div>
             <?php } ?>
             <div class="panel-body">
+              <div style="display:flex;justify-content:end">
+                <form action="<?=base_url()?>dcadmin/Play/search" method="get">
+                  <input name="string" class="form-control" placeholder="search" style="margin-bottom: 5px;display: inline-flex;width: 71%;"/>
+                  <button type="submit" class="btn custom_btn">Search</button>
+                </form>
+              </div>
               <div class="box-body table-responsive no-padding">
                 <table class="table table-bordered table-hover table-striped" >
                   <thead>

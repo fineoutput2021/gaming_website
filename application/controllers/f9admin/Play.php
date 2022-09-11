@@ -88,28 +88,28 @@ class Play extends CI_finecontrol
             $this->r1step6();// Loan Repayment
 
           //--------------- round 2---------------------------
-            $this->r2step2();// buy factory setup
-            $this->r2step3();// buy commercial setup
-            $this->r2step4();// buy stock asian paints
-            $this->r2step5();// gift
-            $this->r2step6();// sell youtube channel
-            $this->r2step7();// sell sell tcs stock
-            $this->r2step8();//  Loan Repayment
+             $this->r2step2();// buy factory setup
+             $this->r2step3();// buy commercial setup
+             $this->r2step4();// buy stock asian paints
+             $this->r2step5();// gift
+             $this->r2step6();// sell youtube channel
+             $this->r2step7();// sell sell tcs stock
+             $this->r2step8();//  Loan Repayment
 
-           //--------------- round 3---------------------------
-            $this->r3step2();// buy lab
-            $this->r3step3();//  buy reliance stock
-            $this->r3step4();//  buy land
-            $this->r3step5();// fixed child expense
-            $this->r3step6();// sell stock asian paints
-            $this->r3step7();// sell commercial setup
-            $this->r3step8();//  Loan Repayment
+            //--------------- round 3---------------------------
+             $this->r3step2();// buy lab
+             $this->r3step3();//  buy reliance stock
+             $this->r3step4();//  buy land
+             $this->r3step5();// fixed child expense
+             $this->r3step6();// sell stock asian paints
+             $this->r3step7();// sell commercial setup
+             $this->r3step8();//  Loan Repayment
 
-             //--------------- round 4 ---------------------------
-              $this->r4step2();// chance donation received
-              $this->r4step3();// sell land
-              $this->r4step4();// sell lab
-              $this->r4step5();//  Loan Repayment
+              //--------------- round 4 ---------------------------
+               $this->r4step2();// chance donation received
+               $this->r4step3();// sell land
+               $this->r4step4();// sell lab
+               $this->r4step5();//  Loan Repayment
 
             //-------- result ---------
             $this->session->set_flashdata('smessage', 'Success! Plaese Check Results');
@@ -122,7 +122,7 @@ class Play extends CI_finecontrol
     //======================= round 1 step 2 (buy tcs stock) ======================================
     public function r1step2()
     {
-      $setting_info = $this->db->get_where('tbl_setting')->result();
+        $setting_info = $this->db->get_where('tbl_setting')->result();
         $salary = $setting_info[0]->salary;
         $personal_exp = $setting_info[0]->personal_exp;
         $loan_exp = $setting_info[0]->loan_exp;
@@ -1335,8 +1335,8 @@ class Play extends CI_finecontrol
         $step_info = $this->db->get_where('tbl_features', array('round'=> 4,'step'=> 2))->result();
         $amount =$step_info[0]->inflow;
         foreach ($step_data->result() as $step) {
-          $salary =$step->salary - ($step->personal_exp + $step->loan_exp);
-          $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
+            $salary =$step->salary - ($step->personal_exp + $step->loan_exp);
+            $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             //--------- yes entry ---------
             $data_insert = array('case_id'=>$step->id,
         'round_id'=>4,
@@ -1622,9 +1622,117 @@ class Play extends CI_finecontrol
             $this->load->view('admin/common/header_view', $data);
             $this->load->view('admin/play/search_result');
             $this->load->view('admin/common/footer_view');
-
         } else {
             redirect("login/admin_login", "refresh");
         }
+    }
+
+    //================================= EXPORT RESULT DATA INTO EXCEL =========================
+    public function export_result_data()
+    {
+        require_once APPPATH . "/third_party/PHPExcel.php"; //------ INCLUDE EXCEL
+        $object = new PHPExcel();
+
+        $object->setActiveSheetIndex(0)->freezePane('B2');
+
+        $table_columns = array("Step History", "Round", "Step", "Title", "Action","Status","Salary","Cash In Hand","Personal Expense","Loan Expense","Passive Income","Buy","Sell");
+
+        $column = 0;
+
+        foreach ($table_columns as $field) {
+            $object->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $field);
+            $column++;
+        }
+
+        $game_data = $this->db->get_where('tbl_game_cases', array('action is NOT NULL'=> null, false))->result();
+
+
+        $excel_row = 2;
+
+        foreach ($game_data as $row) {
+            $buy = json_decode($row->buy);
+            $sell = json_decode($row->sell);
+            // --- for title ----
+            $step_info = $this->db->get_where('tbl_features', array('round'=> $row->round_id,'step'=> $row->step_id))->result();
+            //---action ---
+            if ($row->action==1) {
+                $action= 'Yes';
+            } elseif ($row->action==2) {
+                $action= 'No';
+            } else {
+                $action= 'NA';
+            }
+            //-- passive income ---
+            if (!empty($row->passive_income)) {
+                $passive_income= $row->passive_income;
+            } else {
+                $passive_income= 0;
+            }
+            //--- buy data ---
+            $buy_string="";
+            if (!empty($buy)) {
+                foreach ($buy as $key) {
+                    if ($key==1) {
+                      $buy_string =$buy_string.'TCS Stock,';
+                    } elseif ($key==2) {
+                        $buy_string =$buy_string.'Youtube Channel,';
+                    } elseif ($key==3) {
+                        $buy_string =$buy_string.'Real Estate,';
+                    } elseif ($key==4) {
+                        $buy_string =$buy_string.'Factory Setup,';
+                    } elseif ($key==5) {
+                        $buy_string =$buy_string.'Commercial Setup,';
+                    } elseif ($key==6) {
+                        $buy_string =$buy_string.'Asian Paint Stock,';
+                    } elseif ($key==7) {
+                        $buy_string =$buy_string.'Diagnostic Lab,';
+                    } elseif ($key==8) {
+                        $buy_string =$buy_string.'Realiance Stock,';
+                    } elseif ($key==9) {
+                        $buy_string =$buy_string.'Land,';
+                    }
+                }
+            }
+            //--- sell data ---
+            $sell_string="";
+            if (!empty($sell)) {
+                foreach ($sell as $key) {
+                    if ($key==1) {
+                        $sell_string=$sell_string.'Youtube Channel,';
+                    } elseif ($key==2) {
+                        $sell_string=$sell_string.'TCS Stock,';
+                    } elseif ($key==3) {
+                        $sell_string=$sell_string.'Asian Paint Stock,';
+                    } elseif ($key==4) {
+                        $sell_string=$sell_string.'Commercial Setup,';
+                    } elseif ($key==5) {
+                        $sell_string=$sell_string.'Land,';
+                    } elseif ($key==6) {
+                        $sell_string=$sell_string.'Diagnostic Lab,';
+                    }
+                }
+            }
+            $object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $row->summary);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $row->round_id);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $row->step_id);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $step_info[0]->title);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $action);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, ucfirst($row->status));
+            $object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $row->salary);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row->cash_in_hand);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $row->personal_exp);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row->loan_exp);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $passive_income);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $buy_string);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $sell_string);
+            $excel_row++;
+        }
+        date_default_timezone_set("Asia/Calcutta");
+        $cur_date=date("d/m/Y");
+        $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="Results_data('.$cur_date.').xls"');
+        ob_end_clean();
+        $object_writer->save('php://output');
     }
 }
