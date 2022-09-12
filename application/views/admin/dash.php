@@ -1,7 +1,8 @@
 <?php
-$no_of_cases = $this->db->get_where('tbl_game_cases', array('action is NOT NULL'=> null, false))->num_rows();
+// $no_of_cases = $this->db->get_where('tbl_game_cases', array('action is NOT NULL'=> null, false,'status'=> 'survived'))->num_rows();
 $no_of_winner = $this->db->get_where('tbl_game_cases', array('status'=> 'winner'))->num_rows();
-$no_of_losser = $this->db->get_where('tbl_game_cases', array('status'=> 'losser'))->num_rows();
+$no_of_low_pi = $this->db->get_where('tbl_game_cases', array('status'=> 'losser'))->num_rows();
+$no_of_losser = $this->db->get_where('tbl_game_cases', array('status'=> 'out'))->num_rows();
 // $winner_percetage= $no_of_winner * 100 /$no_of_cases;
 // $losser_percetage= $no_of_losser * 100 /$no_of_cases;
 ?>
@@ -40,7 +41,7 @@ $no_of_losser = $this->db->get_where('tbl_game_cases', array('status'=> 'losser'
           <span class="info-box-icon bg-aqua"><i class="fa fa-list"></i></span>
           <div class="info-box-content">
             <span class="info-box-text">Total Cases</span>
-            <span class="info-box-number"><?=$no_of_cases?></span>
+            <span class="info-box-number"><?=$no_of_winner+$no_of_low_pi+$no_of_losser?></span>
           </div><!-- /.info-box-content -->
         </div><!-- /.info-box -->
       </div><!-- /.col -->
@@ -59,9 +60,18 @@ $no_of_losser = $this->db->get_where('tbl_game_cases', array('status'=> 'losser'
 
       <div class="col-md-3 col-sm-6 col-xs-12">
         <div class="info-box">
+          <span class="info-box-icon bg-yellow"><i class="fa fa-users"></i></span>
+          <div class="info-box-content">
+            <span class="info-box-text">Total Low Passive <br />Income Users</span>
+            <span class="info-box-number"><?=$no_of_low_pi?></span>
+          </div><!-- /.info-box-content -->
+        </div><!-- /.info-box -->
+      </div><!-- /.col -->
+      <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box">
           <span class="info-box-icon bg-red"><i class="fa fa-users"></i></span>
           <div class="info-box-content">
-            <span class="info-box-text">Total Lossers</span>
+            <span class="info-box-text">Total lossers</span>
             <span class="info-box-number"><?=$no_of_losser?></span>
           </div><!-- /.info-box-content -->
         </div><!-- /.info-box -->

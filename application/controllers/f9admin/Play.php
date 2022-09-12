@@ -1636,7 +1636,7 @@ class Play extends CI_finecontrol
 
         $object->setActiveSheetIndex(0)->freezePane('B2');
 
-        $table_columns = array("Step History", "Round", "Step", "Title", "Action","Status","Salary","Cash In Hand","Personal Expense","Loan Expense","Passive Income","Buy","Sell");
+        $table_columns = array("Step History", "Round", "Step", "Title", "Action","Status","Salary","Cash In Hand","Personal Expense","Housing Expense","Business Expense","Passive Income","Buy","Sell");
 
         $column = 0;
 
@@ -1655,6 +1655,7 @@ class Play extends CI_finecontrol
             $sell = json_decode($row->sell);
             // --- for title ----
             $step_info = $this->db->get_where('tbl_features', array('round'=> $row->round_id,'step'=> $row->step_id))->result();
+            $setting_info = $this->db->get_where('tbl_setting')->result();
             //---action ---
             if ($row->action==1) {
                 $action= 'Yes';
@@ -1722,10 +1723,11 @@ class Play extends CI_finecontrol
             $object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $row->salary);
             $object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row->cash_in_hand);
             $object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $row->personal_exp);
-            $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row->loan_exp);
-            $object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $passive_income);
-            $object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $buy_string);
-            $object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $sell_string);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row,  $setting_info[0]->loan_exp);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $row->loan_exp-$setting_info[0]->loan_exp);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $passive_income);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $buy_string);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $sell_string);
             $excel_row++;
         }
         date_default_timezone_set("Asia/Calcutta");

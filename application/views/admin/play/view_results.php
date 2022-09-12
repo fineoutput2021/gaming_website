@@ -55,7 +55,8 @@
                       <th>Salary</th>
                       <th>Cash In Hand</th>
                       <th>Personal Expense</th>
-                      <th>Loan Expense</th>
+                      <th>Housing Expense</th>
+                      <th>Business Expense</th>
                       <th>Passive Income</th>
                       <th>Buy</th>
                       <th>Sell</th>
@@ -64,6 +65,7 @@
                   <tbody>
                     <?php foreach ($game_data->result() as $data) {
                     $step_info = $this->db->get_where('tbl_features', array('round'=> $data->round_id,'step'=> $data->step_id))->result();
+                    $setting_info = $this->db->get_where('tbl_setting')->result();
                     $buy = json_decode($data->buy);
                     $sell = json_decode($data->sell);
                     ?>
@@ -84,7 +86,8 @@
                       <td>₹<?php echo $data->salary?> </td>
                       <td>₹<?php echo $data->cash_in_hand?> </td>
                       <td>₹<?php echo $data->personal_exp?> </td>
-                      <td>₹<?php echo $data->loan_exp?> </td>
+                      <td>₹<?php echo $setting_info[0]->loan_exp?> </td>
+                      <td>₹<?php echo $data->loan_exp-$setting_info[0]->loan_exp?> </td>
                       <td>₹<?php if (!empty($data->passive_income)) {
                           echo $data->passive_income;
                       } else {
