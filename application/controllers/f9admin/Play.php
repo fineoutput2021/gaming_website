@@ -193,6 +193,11 @@ class Play extends CI_finecontrol
                 $buy=array(2);
             }
             $loan_exp = $step2->loan_exp+$out;
+            if($step2->cash_in_hand + ($in-$out)>0){
+              $status='survived';
+            }else{
+              $status='out';
+            }
             $data_insert = array('case_id'=>$step2->id,
             'round_id'=>1,
             'step_id'=>3,
@@ -204,7 +209,7 @@ class Play extends CI_finecontrol
             'loan_exp' =>$loan_exp,
             'buy' =>json_encode($buy),
             'summary' =>$step2->summary.",Yes",
-            'status'=>'survived'
+            'status'=>$status
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             //--------- no entry ---------
@@ -242,6 +247,11 @@ class Play extends CI_finecontrol
                 $buy=array(3);
             }
             $loan_exp = $step->loan_exp+$out;
+            if($step->cash_in_hand + ($in-$out)>0){
+              $status='survived';
+            }else{
+              $status='out';
+            }
             $data_insert = array('case_id'=>$step->id,
         'round_id'=>1,
         'step_id'=>4,
@@ -253,7 +263,7 @@ class Play extends CI_finecontrol
         'loan_exp' =>$loan_exp,
         'buy' =>json_encode($buy),
         'summary' =>$step->summary.",Yes",
-        'status'=>'survived'
+        'status'=>$status
         );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             //--------- no entry ---------
@@ -333,7 +343,7 @@ class Play extends CI_finecontrol
         foreach ($step_data->result() as $step) {
             //-----step  history ----
             $buy = json_decode($step->buy);
-            if ($step->cash_in_hand >= $exp) {
+            if ($step->cash_in_hand > $exp) {
                 //--------- yes entry ---------
                 $new_salary = $step->salary;
                 $loan_exp = $step->loan_exp-($exp * LOAN_PERCENTAGE /100);
@@ -409,6 +419,12 @@ class Play extends CI_finecontrol
             $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             //--------- yes entry ---------
             $loan_exp = $step->loan_exp+$out;
+            $loan_exp = $step->loan_exp+$out;
+            if($step->cash_in_hand + ($in-$out)>0){
+              $status='survived';
+            }else{
+              $status='out';
+            }
             $data_insert = array('case_id'=>$step->id,
             'round_id'=>2,
             'step_id'=>2,
@@ -420,7 +436,7 @@ class Play extends CI_finecontrol
             'passive_income'=>$step->passive_income+$in,
             'buy' =>json_encode($buy),
             'summary' =>$step->summary.",Yes",
-            'status'=>'survived'
+            'status'=>$status
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             //--------- no entry ---------
@@ -460,6 +476,12 @@ class Play extends CI_finecontrol
             //--------- yes entry ---------
             $new_cash_in_hand = $step->cash_in_hand;
             $loan_exp = $step->loan_exp+$out;
+            $loan_exp = $step->loan_exp+$out;
+          if($step->cash_in_hand + ($in-$out)>0){
+            $status='survived';
+          }else{
+            $status='out';
+          }
             $data_insert = array('case_id'=>$step->id,
             'round_id'=>2,
             'step_id'=>3,
@@ -471,7 +493,7 @@ class Play extends CI_finecontrol
             'passive_income'=>$step->passive_income+$in,
             'buy' =>json_encode($buy),
             'summary' =>$step->summary.",Yes",
-            'status'=>'survived'
+            'status'=>$status
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             //--------- no entry ---------
@@ -838,7 +860,6 @@ class Play extends CI_finecontrol
             $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             $buy = json_decode($step->buy);
             $sell = json_decode($step->sell);
-            if ($new_cash_in_hand>0) {
                 if (!empty($buy)) {
                     array_push($buy, 7);
                 } else {
@@ -846,20 +867,25 @@ class Play extends CI_finecontrol
                 }
                 //--------- yes entry ---------
                 $loan_exp = $step->loan_exp+$out;
+                if($step->cash_in_hand + ($in-$out)>0){
+                  $status='survived';
+                }else{
+                  $status='out';
+                }
                 $data_insert = array('case_id'=>$step->id,
-        'round_id'=>3,
-        'step_id'=>2,
-        'action'=>1,
-        'salary'=>$step->salary,
-        'cash_in_hand' =>$new_cash_in_hand + ($in-$out),
-        'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$loan_exp,
-        'passive_income'=>$step->passive_income+$in,
-        'buy' =>json_encode($buy),
-        'sell'=>json_encode($sell),
-        'summary' =>$step->summary.",Yes",
-        'status'=>'survived'
-        );
+                  'round_id'=>3,
+                  'step_id'=>2,
+                  'action'=>1,
+                  'salary'=>$step->salary,
+                  'cash_in_hand' =>$new_cash_in_hand + ($in-$out),
+                  'personal_exp' =>$step->personal_exp,
+                  'loan_exp' =>$loan_exp,
+                  'passive_income'=>$step->passive_income+$in,
+                  'buy' =>json_encode($buy),
+                  'sell'=>json_encode($sell),
+                  'summary' =>$step->summary.",Yes",
+                  'status'=>$status
+                  );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                 //--------- no entry ---------
                 $buy = json_decode($step->buy);
@@ -878,25 +904,7 @@ class Play extends CI_finecontrol
         'status'=>'survived'
         );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
-            } else {
-                //--------- no entry ---------
-                $buy = json_decode($step->buy);
-                $data_insert = array('case_id'=>$step->id,
-    'round_id'=>3,
-    'step_id'=>2,
-    'action'=>0,
-    'salary'=>$step->salary,
-    'cash_in_hand' =>$new_cash_in_hand,
-    'personal_exp' =>$step->personal_exp,
-    'loan_exp' =>$step->loan_exp,
-    'passive_income'=>$step->passive_income,
-    'buy' =>json_encode($buy),
-    'sell'=>json_encode($sell),
-    'summary' =>$step->summary.",NA",
-    'status'=>'out'
-    );
-                $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
-            }
+
         }
         return;
     }
@@ -913,7 +921,7 @@ class Play extends CI_finecontrol
             $sell = json_decode($step->sell);
             $salary = $step->salary;
             $CH = $step->cash_in_hand;
-            if ($CH >= $bp) {
+            if ($CH > $bp) {
                 if (!empty($buy)) {
                     array_push($buy, 8);
                 } else {
@@ -997,6 +1005,11 @@ class Play extends CI_finecontrol
             //--------- yes entry ---------
             $new_cash_in_hand = $step->cash_in_hand;
             $loan_exp = $step->loan_exp+$out;
+              if($step->cash_in_hand + ($in-$out)>0){
+                $status='survived';
+              }else{
+                $status='out';
+              }
             $data_insert = array('case_id'=>$step->id,
         'round_id'=>3,
         'step_id'=>4,
@@ -1009,7 +1022,7 @@ class Play extends CI_finecontrol
         'passive_income'=>$step->passive_income+$in,
         'buy' =>json_encode($buy),
         'sell' =>$step->sell,
-        'status'=>'survived'
+        'status'=>$status
         );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             //--------- no entry ---------
@@ -1630,8 +1643,12 @@ class Play extends CI_finecontrol
     //================================= EXPORT RESULT DATA INTO EXCEL =========================
     public function export_result_data()
     {
-      ini_set('memory_limit', '2048M');
+      ini_set('memory_limit', '3000M');
         require_once APPPATH . "/third_party/PHPExcel.php"; //------ INCLUDE EXCEL
+        // $cacheMethod = PHPExcel_CachedObjectStorageFactory:: cache_to_phpTemp;
+        // $cacheSettings = array( 'memoryCacheSize' => '100MB');
+        // PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+
         $object = new PHPExcel();
 
         $object->setActiveSheetIndex(0)->freezePane('B2');
@@ -1647,7 +1664,7 @@ class Play extends CI_finecontrol
 
         $game_data = $this->db->get_where('tbl_game_cases', array('action is NOT NULL'=> null, false))->result();
 
-
+// echo $game_data;die();
         $excel_row = 2;
 
         foreach ($game_data as $row) {
@@ -1732,10 +1749,11 @@ class Play extends CI_finecontrol
         }
         date_default_timezone_set("Asia/Calcutta");
         $cur_date=date("d/m/Y");
-        $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel5');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="Results_data('.$cur_date.').xls"');
-        // ob_end_clean();
+        // ob_clean();
+        // flush();
+        $object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
         $object_writer->save('php://output');
     }
 }
