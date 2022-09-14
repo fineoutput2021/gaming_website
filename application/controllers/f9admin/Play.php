@@ -616,7 +616,7 @@ class Play extends CI_finecontrol
     {
         $step_data = $this->db->get_where('tbl_game_cases', array('round_id'=>2,'step_id'=> 5,'status'=>'survived'));
         //---- get step info --
-        $step_info = $this->db->get_where('tbl_features', array('round'=> 2,'step'=> 5))->result();
+        $step_info = $this->db->get_where('tbl_features', array('round'=> 2,'step'=> 6))->result();
         $amount =$step_info[0]->inflow;
         foreach ($step_data->result() as $step) {
             //-----step  history ----
@@ -635,7 +635,7 @@ class Play extends CI_finecontrol
                     'salary'=>$step->salary,
                     'cash_in_hand' =>$step->cash_in_hand + ($amount),
                     'personal_exp' =>$step->personal_exp,
-                    'loan_exp' =>$step->loan_exp,
+                    'loan_exp' =>$loan_exp,
                     'buy' =>json_encode($buy),
                     'passive_income'=>$step->passive_income-$yt_buy[0]->inflow,
                     'sell'=>json_encode($sell),
