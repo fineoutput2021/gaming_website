@@ -442,7 +442,7 @@ class Play extends CI_finecontrol
             } else {
                 $buy=array(4);
             }
-            $salary =$step->salary - ($step->personal_exp + $step->business_exp);
+            $salary =$step->salary - ($step->personal_exp +$step->house_exp+ $step->business_exp);
             $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             //--------- yes entry ---------
             $business_exp = $step->business_exp+$out;
@@ -471,7 +471,7 @@ class Play extends CI_finecontrol
             'status'=>$status
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
-            $exp=$step->business_exp+$step->personal_exp;
+            $exp=$step->business_exp+$step->house_exp+$step->personal_exp;
             $pi=$step->passive_income;
             if($exp<=$pi){
               $status='winner';
@@ -931,7 +931,7 @@ class Play extends CI_finecontrol
         $in =$step_info[0]->inflow;
         $out =$step_info[0]->outflow;
         foreach ($step_data->result() as $step) {
-            $salary =$step->salary - ($step->personal_exp + $step->business_exp);
+            $salary =$step->salary - ($step->personal_exp +$step->house_exp+ $step->business_exp);
             $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             $buy = json_decode($step->buy);
             $sell = json_decode($step->sell);
@@ -970,7 +970,7 @@ class Play extends CI_finecontrol
                   );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                 //--------- no entry ---------
-                $exp=$step->business_exp+$step->personal_exp;
+                $exp=$step->business_exp+$step->house_exp+$step->personal_exp;
                 $pi=$step->passive_income;
                 if($exp<=$pi){
                   $status='winner';
@@ -1477,7 +1477,7 @@ class Play extends CI_finecontrol
         $step_info = $this->db->get_where('tbl_features', array('round'=> 4,'step'=> 2))->result();
         $amount =$step_info[0]->inflow;
         foreach ($step_data->result() as $step) {
-            $salary =$step->salary - ($step->personal_exp + $step->business_exp);
+            $salary =$step->salary - ($step->personal_exp +$step->house_exp+ $step->business_exp);
             $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             $exp=$step->business_exp+$step->house_exp+$step->personal_exp;
               $pi=$step->passive_income;
