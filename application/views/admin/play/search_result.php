@@ -85,8 +85,8 @@
                       <td>₹<?php echo $data->salary?> </td>
                       <td>₹<?php echo $data->cash_in_hand?> </td>
                       <td>₹<?php echo $data->personal_exp?> </td>
-                      <td>₹<?php echo $setting_info[0]->loan_exp?> </td>
                       <td>₹<?php echo $data->loan_exp-$setting_info[0]->loan_exp?> </td>
+                      <td>₹<?php echo $setting_info[0]->loan_exp?> </td>
                       <td>₹<?php if (!empty($data->passive_income)) {
                           echo $data->passive_income;
                       } else {

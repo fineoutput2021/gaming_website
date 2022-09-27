@@ -185,6 +185,7 @@ class Play extends CI_finecontrol
         $in =$step_info[0]->inflow;
         $out =$step_info[0]->outflow;
         foreach ($step_2_data as $step2) {
+
             //--------- yes entry ---------
             $buy = json_decode($step2->buy);
             if (!empty($buy)) {
@@ -193,11 +194,16 @@ class Play extends CI_finecontrol
                 $buy=array(2);
             }
             $loan_exp = $step2->loan_exp+$out;
+            $exp=$loan_exp+$step2->personal_exp;
+            if($exp<=$in){
+              $status='winner';
+            }else{
             if($step2->cash_in_hand + ($in-$out)>0){
               $status='survived';
             }else{
               $status='out';
             }
+          }
             $data_insert = array('case_id'=>$step2->id,
             'round_id'=>1,
             'step_id'=>3,
@@ -247,11 +253,16 @@ class Play extends CI_finecontrol
                 $buy=array(3);
             }
             $loan_exp = $step->loan_exp+$out;
+            $exp=$loan_exp+$step->personal_exp;
+            $pi=$step->passive_income+$in;
+            if($exp<=$pi){
+              $status='winner';
+            }else{
             if($step->cash_in_hand + ($in-$out)>0){
               $status='survived';
             }else{
               $status='out';
-            }
+            }}
             $data_insert = array('case_id'=>$step->id,
         'round_id'=>1,
         'step_id'=>4,
@@ -347,6 +358,13 @@ class Play extends CI_finecontrol
                 //--------- yes entry ---------
                 $new_salary = $step->salary;
                 $loan_exp = $step->loan_exp-($exp * LOAN_PERCENTAGE /100);
+                $total_exp=$loan_exp+$step->personal_exp;
+                $pi=$step->passive_income;
+                if($total_exp<=$pi){
+                  $status='winner';
+                }else{
+                  $status='survived';
+                }
                 $data_insert = array('case_id'=>$step->id,
                 'round_id'=>1,
                 'step_id'=>6,
@@ -358,7 +376,7 @@ class Play extends CI_finecontrol
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'summary' =>$step->summary.",Yes",
-                'status'=>'survived'
+                'status'=>$status
                 );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                 //--------- no entry ---------
@@ -419,12 +437,16 @@ class Play extends CI_finecontrol
             $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             //--------- yes entry ---------
             $loan_exp = $step->loan_exp+$out;
-            $loan_exp = $step->loan_exp+$out;
+            $exp=$loan_exp+$step->personal_exp;
+            $pi=$step->passive_income+$in;
+            if($exp<=$pi){
+              $status='winner';
+            }else{
             if($step->cash_in_hand + ($in-$out)>0){
               $status='survived';
             }else{
               $status='out';
-            }
+            }}
             $data_insert = array('case_id'=>$step->id,
             'round_id'=>2,
             'step_id'=>2,
@@ -439,6 +461,13 @@ class Play extends CI_finecontrol
             'status'=>$status
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
+            $exp=$step->loan_exp+$step->personal_exp;
+            $pi=$step->passive_income;
+            if($exp<=$pi){
+              $status='winner';
+            }else{
+              $status='survived';
+            }
             //--------- no entry ---------
             $buy = json_decode($step->buy);
             $data_insert = array('case_id'=>$step->id,
@@ -452,7 +481,7 @@ class Play extends CI_finecontrol
             'passive_income'=>$step->passive_income,
             'buy' =>json_encode($buy),
             'summary' =>$step->summary.",No",
-            'status'=>'survived'
+            'status'=>$status
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
         }
@@ -476,12 +505,16 @@ class Play extends CI_finecontrol
             //--------- yes entry ---------
             $new_cash_in_hand = $step->cash_in_hand;
             $loan_exp = $step->loan_exp+$out;
-            $loan_exp = $step->loan_exp+$out;
-          if($step->cash_in_hand + ($in-$out)>0){
-            $status='survived';
-          }else{
-            $status='out';
-          }
+            $exp=$loan_exp+$step->personal_exp;
+            $pi=$step->passive_income+$in;
+            if($exp<=$pi){
+              $status='winner';
+            }else{
+            if($step->cash_in_hand + ($in-$out)>0){
+              $status='survived';
+            }else{
+              $status='out';
+            }}
             $data_insert = array('case_id'=>$step->id,
             'round_id'=>2,
             'step_id'=>3,
@@ -628,6 +661,13 @@ class Play extends CI_finecontrol
                     //get yt buy details
                     $yt_buy = $this->db->get_where('tbl_features', array('round'=> 1,'step'=> 3))->result();
                     $loan_exp = $step->loan_exp-$yt_buy[0]->outflow;
+                    $exp=$loan_exp+$step->personal_exp;
+                    $pi=$step->passive_income-$yt_buy[0]->inflow;
+                    if($exp<=$pi){
+                      $status='winner';
+                    }else{
+                      $status='survived';
+                    }
                     $data_insert = array('case_id'=>$step->id,
                     'round_id'=>2,
                     'step_id'=>6,
@@ -640,7 +680,7 @@ class Play extends CI_finecontrol
                     'passive_income'=>$step->passive_income-$yt_buy[0]->inflow,
                     'sell'=>json_encode($sell),
                     'summary' =>$step->summary.",Yes",
-                    'status'=>'survived'
+                    'status'=>$status
                     );
                     $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                     //--------- No entry ---------
@@ -791,6 +831,13 @@ class Play extends CI_finecontrol
                 //--------- yes entry ---------
                 $new_salary = $step->salary;
                 $loan_exp = $step->loan_exp-($exp * LOAN_PERCENTAGE /100);
+                $total_exp=$loan_exp+$step->personal_exp;
+                $pi=$step->passive_income;
+                if($total_exp<=$pi){
+                  $status='winner';
+                }else{
+                  $status='survived';
+                }
                 $data_insert = array('case_id'=>$step->id,
                 'round_id'=>2,
                 'step_id'=>8,
@@ -803,7 +850,7 @@ class Play extends CI_finecontrol
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
                 'summary' =>$step->summary.",Yes",
-                'status'=>'survived'
+                'status'=>$status
                 );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                 //--------- no entry ---------
@@ -867,11 +914,17 @@ class Play extends CI_finecontrol
                 }
                 //--------- yes entry ---------
                 $loan_exp = $step->loan_exp+$out;
+                $exp=$loan_exp+$step->personal_exp;
+                $pi=$step->passive_income+$in;
+                if($exp<=$pi){
+                  $status='winner';
+                }else{
                 if($step->cash_in_hand + ($in-$out)>0){
                   $status='survived';
                 }else{
                   $status='out';
                 }
+              }
                 $data_insert = array('case_id'=>$step->id,
                   'round_id'=>3,
                   'step_id'=>2,
@@ -888,6 +941,13 @@ class Play extends CI_finecontrol
                   );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                 //--------- no entry ---------
+                $exp=$step->loan_exp+$step->personal_exp;
+                $pi=$step->passive_income;
+                if($exp<=$pi){
+                  $status='winner';
+                }else{
+                  $status='survived';
+                }
                 $buy = json_decode($step->buy);
                 $data_insert = array('case_id'=>$step->id,
         'round_id'=>3,
@@ -901,7 +961,7 @@ class Play extends CI_finecontrol
         'buy' =>json_encode($buy),
         'sell'=>json_encode($sell),
         'summary' =>$step->summary.",No",
-        'status'=>'survived'
+        'status'=>$status
         );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
 
@@ -1005,11 +1065,17 @@ class Play extends CI_finecontrol
             //--------- yes entry ---------
             $new_cash_in_hand = $step->cash_in_hand;
             $loan_exp = $step->loan_exp+$out;
+            $exp=$loan_exp+$step->personal_exp;
+            $pi=$step->passive_income+$in;
+              if($exp<=$pi){
+                $status='winner';
+              }else{
               if($step->cash_in_hand + ($in-$out)>0){
                 $status='survived';
               }else{
                 $status='out';
               }
+            }
             $data_insert = array('case_id'=>$step->id,
         'round_id'=>3,
         'step_id'=>4,
@@ -1204,6 +1270,13 @@ class Play extends CI_finecontrol
                     //get yt buy details
                     $ct_buy = $this->db->get_where('tbl_features', array('round'=> 2,'step'=> 3))->result();
                     $loan_exp = $step->loan_exp-$ct_buy[0]->outflow;
+                    $exp=$loan_exp+$step->personal_exp;
+                    $pi=$step->passive_income-$ct_buy[0]->inflow;
+                    if($exp<=$pi){
+                      $status='winner';
+                    }else{
+                      $status='survived';
+                    }
                     $data_insert = array('case_id'=>$step->id,
         'round_id'=>3,
         'step_id'=>7,
@@ -1216,7 +1289,7 @@ class Play extends CI_finecontrol
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income-$ct_buy[0]->inflow,
         'sell'=>json_encode($sell),
-        'status'=>'survived'
+        'status'=>$status
         );
                     $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                     //--------- No entry ---------
@@ -1285,6 +1358,13 @@ class Play extends CI_finecontrol
                 //--------- yes entry ---------
                 $new_salary = $step->salary;
                 $loan_exp = $step->loan_exp-($exp * LOAN_PERCENTAGE /100);
+                $total_exp=$loan_exp+$step->personal_exp;
+              $pi=$step->passive_income;
+              if($total_exp<=$pi){
+                $status='winner';
+              }else{
+                $status='survived';
+              }
                 $data_insert = array('case_id'=>$step->id,
                 'round_id'=>3,
                 'step_id'=>8,
@@ -1297,7 +1377,7 @@ class Play extends CI_finecontrol
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
-                'status'=>'survived'
+                'status'=>$status
                 );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                 //--------- no entry ---------
@@ -1350,6 +1430,13 @@ class Play extends CI_finecontrol
         foreach ($step_data->result() as $step) {
             $salary =$step->salary - ($step->personal_exp + $step->loan_exp);
             $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
+            $exp=$step->loan_exp+$step->personal_exp;
+              $pi=$step->passive_income;
+              if($exp<=$pi){
+                $status='winner';
+              }else{
+                $status = 'survived';
+              }
             //--------- yes entry ---------
             $data_insert = array('case_id'=>$step->id,
         'round_id'=>4,
@@ -1363,7 +1450,7 @@ class Play extends CI_finecontrol
         'passive_income'=>$step->passive_income,
         'buy' =>$step->buy,
         'sell'=>$step->sell,
-        'status'=>'survived'
+        'status'=>$status
         );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
         }
@@ -1390,6 +1477,13 @@ class Play extends CI_finecontrol
                     //get land buy details
                     $land_buy = $this->db->get_where('tbl_features', array('round'=> 3,'step'=> 4))->result();
                     $loan_exp = $step->loan_exp-$land_buy[0]->outflow;
+                    $exp=$loan_exp+$step->personal_exp;
+                      $pi=$step->passive_income-$land_buy[0]->inflow;
+                      if($exp<=$pi){
+                        $status='winner';
+                      }else{
+                        $status = 'survived';
+                      }
                     $data_insert = array('case_id'=>$step->id,
                 'round_id'=>4,
                 'step_id'=>3,
@@ -1402,7 +1496,7 @@ class Play extends CI_finecontrol
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income-$land_buy[0]->inflow,
         'sell'=>json_encode($sell),
-        'status'=>'survived'
+        'status'=>$status
         );
                     $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                     //--------- No entry ---------
@@ -1478,6 +1572,13 @@ class Play extends CI_finecontrol
                     //get land buy details
                     $lab_buy = $this->db->get_where('tbl_features', array('round'=> 3,'step'=> 2))->result();
                     $loan_exp = $step->loan_exp-$lab_buy[0]->outflow;
+                    $exp=$loan_exp+$step->personal_exp;
+                      $pi=$step->passive_income-$lab_buy[0]->inflow;
+                      if($exp<=$pi){
+                        $status='winner';
+                      }else{
+                        $status = 'survived';
+                      }
                     $data_insert = array('case_id'=>$step->id,
         'round_id'=>4,
         'step_id'=>4,
@@ -1490,7 +1591,7 @@ class Play extends CI_finecontrol
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income -$lab_buy[0]->inflow,
         'sell'=>json_encode($sell),
-        'status'=>'survived'
+        'status'=>$status
         );
                     $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                     //--------- No entry ---------
@@ -1560,7 +1661,7 @@ class Play extends CI_finecontrol
                 $new_cash = $step->cash_in_hand - ($exp);
                 $loan_exp = $step->loan_exp-($exp * LOAN_PERCENTAGE /100);
                 $total_exp = $loan_exp+$step->personal_exp;
-                if ($total_exp < $step->passive_income) {
+                if ($total_exp <= $step->passive_income) {
                     $status1= 'winner';
                 } else {
                     $status1= 'losser';
@@ -1582,7 +1683,7 @@ class Play extends CI_finecontrol
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                 //--------- no entry ---------
                 $total_exp2 = $step->loan_exp+$step->personal_exp;
-                if ($total_exp2 < $step->passive_income) {
+                if ($total_exp2 <= $step->passive_income) {
                     $status2= 'winner';
                 } else {
                     $status2= 'losser';
