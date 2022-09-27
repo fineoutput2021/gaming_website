@@ -911,7 +911,7 @@ class Play extends CI_finecontrol
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
                 'summary' =>$step->summary.",NA",
-                'status'=>'out'
+                'status'=>'survived'
                 );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             }
@@ -1459,7 +1459,7 @@ class Play extends CI_finecontrol
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
-                'status'=>'out'
+                'status'=>'survived'
                 );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             }
@@ -1764,6 +1764,12 @@ class Play extends CI_finecontrol
       );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             } else {
+              $total_exp = $step->house_exp+$step->business_exp+$step->personal_exp;
+              if ($total_exp <= $step->passive_income) {
+                  $status1= 'winner';
+              } else {
+                  $status1= 'losser';
+              }
                 //--------- for Out of money ---------
                 $data_insert = array('case_id'=>$step->id,
                 'round_id'=>4,
@@ -1778,7 +1784,7 @@ class Play extends CI_finecontrol
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
-                'status'=>'out'
+                'status'=>$status1
                 );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
             }
