@@ -125,8 +125,8 @@ class Play extends CI_finecontrol
         $setting_info = $this->db->get_where('tbl_setting')->result();
         $salary = $setting_info[0]->salary;
         $personal_exp = $setting_info[0]->personal_exp;
-        $loan_exp = $setting_info[0]->loan_exp;
-        $CH = $salary-($personal_exp+$loan_exp);
+        $house_exp = $setting_info[0]->loan_exp;
+        $CH = $salary-($personal_exp+$house_exp);
         //---- get step info --
         $step_info = $this->db->get_where('tbl_features', array('round'=> 1,'step'=> 2))->result();
         $bp =$step_info[0]->outflow;
@@ -142,7 +142,7 @@ class Play extends CI_finecontrol
             'cash_in_hand' =>$CH - $bp,
             'buy' =>json_encode($buy),
             'personal_exp' =>$personal_exp,
-            'loan_exp' =>$loan_exp,
+            'house_exp' =>$house_exp,
             'summary' =>'Yes',
             'status'=>'survived'
             );
@@ -154,7 +154,7 @@ class Play extends CI_finecontrol
             'salary'=>$salary,
             'cash_in_hand' =>$CH,
             'personal_exp' =>$personal_exp,
-            'loan_exp' =>$loan_exp,
+            'house_exp' =>$house_exp,
             'summary' =>'No',
             'status'=>'survived'
             );
@@ -169,7 +169,7 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$CH,
         'personal_exp' =>$personal_exp,
         'summary' =>'NA',
-        'loan_exp' =>$loan_exp,
+        'house_exp' =>$house_exp,
         'status'=>'survived'
         );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
@@ -193,8 +193,8 @@ class Play extends CI_finecontrol
             } else {
                 $buy=array(2);
             }
-            $loan_exp = $step2->loan_exp+$out;
-            $exp=$loan_exp+$step2->personal_exp;
+            $business_exp = $step2->business_exp+$out;
+            $exp=$business_exp+$step2->house_exp+$step2->personal_exp;
             if($exp<=$in){
               $status='winner';
             }else{
@@ -212,7 +212,8 @@ class Play extends CI_finecontrol
             'passive_income'=>$in,
             'cash_in_hand' =>$step2->cash_in_hand + ($in-$out),
             'personal_exp' =>$step2->personal_exp,
-            'loan_exp' =>$loan_exp,
+            'house_exp' =>$step2->house_exp,
+            'business_exp' =>$business_exp,
             'buy' =>json_encode($buy),
             'summary' =>$step2->summary.",Yes",
             'status'=>$status
@@ -227,7 +228,8 @@ class Play extends CI_finecontrol
         'salary'=>$step2->salary,
         'cash_in_hand' =>$step2->cash_in_hand,
         'personal_exp' =>$step2->personal_exp,
-        'loan_exp' =>$step2->loan_exp,
+        'house_exp' =>$step2->house_exp,
+        'business_exp' =>$step2->business_exp,
         'buy' =>json_encode($buy),
         'summary' =>$step2->summary.",No",
         'status'=>'survived'
@@ -252,8 +254,8 @@ class Play extends CI_finecontrol
             } else {
                 $buy=array(3);
             }
-            $loan_exp = $step->loan_exp+$out;
-            $exp=$loan_exp+$step->personal_exp;
+            $business_exp = $step->business_exp+$out;
+            $exp=$business_exp+$step->house_exp+$step->personal_exp;
             $pi=$step->passive_income+$in;
             if($exp<=$pi){
               $status='winner';
@@ -270,8 +272,9 @@ class Play extends CI_finecontrol
         'salary'=>$step->salary,
         'passive_income'=> $step->passive_income+$in,
         'cash_in_hand' =>$step->cash_in_hand + ($in-$out),
+        'house_exp' =>$step->house_exp,
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$loan_exp,
+        'business_exp' =>$business_exp,
         'buy' =>json_encode($buy),
         'summary' =>$step->summary.",Yes",
         'status'=>$status
@@ -287,7 +290,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand,
         'passive_income'=>$step->passive_income,
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'buy' =>json_encode($buy),
         'summary' =>$step->summary.",No",
         'status'=>'survived'
@@ -316,7 +320,8 @@ class Play extends CI_finecontrol
             'salary'=>$new_salary,
             'cash_in_hand' =>$step->cash_in_hand - ($exp),
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'passive_income'=>$step->passive_income,
             'buy' =>json_encode($buy),
             'summary' =>$step->summary.",Yes",
@@ -334,7 +339,8 @@ class Play extends CI_finecontrol
             'salary'=>$new_salary,
             'cash_in_hand' =>$step->cash_in_hand - ($exp),
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'passive_income'=>$step->passive_income,
             'buy' =>json_encode($buy),
             'summary' =>$step->summary.",Yes",
@@ -357,8 +363,8 @@ class Play extends CI_finecontrol
             if ($step->cash_in_hand > $exp) {
                 //--------- yes entry ---------
                 $new_salary = $step->salary;
-                $loan_exp = $step->loan_exp-($exp * LOAN_PERCENTAGE /100);
-                $total_exp=$loan_exp+$step->personal_exp;
+                $house_exp = $step->house_exp-($exp * LOAN_PERCENTAGE /100);
+                $total_exp=$house_exp+$step->business_exp+$step->personal_exp;
                 $pi=$step->passive_income;
                 if($total_exp<=$pi){
                   $status='winner';
@@ -372,7 +378,8 @@ class Play extends CI_finecontrol
                 'salary'=>$new_salary,
                 'cash_in_hand' =>$step->cash_in_hand - ($exp),
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$loan_exp,
+                'house_exp' =>$house_exp,
+                'business_exp' =>$step->business_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'summary' =>$step->summary.",Yes",
@@ -388,7 +395,8 @@ class Play extends CI_finecontrol
                 'cash_in_hand' =>$step->cash_in_hand,
                 'passive_income'=>$step->passive_income,
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'buy' =>json_encode($buy),
                 'summary' =>$step->summary.",No",
                 'status'=>'survived'
@@ -403,7 +411,8 @@ class Play extends CI_finecontrol
                 'salary'=>$step->salary,
                 'cash_in_hand' =>$step->cash_in_hand,
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'summary' =>$step->summary.",NA",
@@ -433,16 +442,16 @@ class Play extends CI_finecontrol
             } else {
                 $buy=array(4);
             }
-            $salary =$step->salary - ($step->personal_exp + $step->loan_exp);
+            $salary =$step->salary - ($step->personal_exp + $step->business_exp);
             $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             //--------- yes entry ---------
-            $loan_exp = $step->loan_exp+$out;
-            $exp=$loan_exp+$step->personal_exp;
+            $business_exp = $step->business_exp+$out;
+            $exp=$business_exp+$step->house_exp+$step->personal_exp;
             $pi=$step->passive_income+$in;
             if($exp<=$pi){
               $status='winner';
             }else{
-            if($step->cash_in_hand + ($in-$out)>0){
+            if($new_cash_in_hand + ($in-$out)>0){
               $status='survived';
             }else{
               $status='out';
@@ -454,14 +463,15 @@ class Play extends CI_finecontrol
             'salary'=>$step->salary,
             'cash_in_hand' =>$new_cash_in_hand + ($in-$out),
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$business_exp,
             'passive_income'=>$step->passive_income+$in,
             'buy' =>json_encode($buy),
             'summary' =>$step->summary.",Yes",
             'status'=>$status
             );
             $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
-            $exp=$step->loan_exp+$step->personal_exp;
+            $exp=$step->business_exp+$step->personal_exp;
             $pi=$step->passive_income;
             if($exp<=$pi){
               $status='winner';
@@ -477,7 +487,8 @@ class Play extends CI_finecontrol
             'salary'=>$step->salary,
             'cash_in_hand' =>$new_cash_in_hand,
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'passive_income'=>$step->passive_income,
             'buy' =>json_encode($buy),
             'summary' =>$step->summary.",No",
@@ -504,8 +515,8 @@ class Play extends CI_finecontrol
             }
             //--------- yes entry ---------
             $new_cash_in_hand = $step->cash_in_hand;
-            $loan_exp = $step->loan_exp+$out;
-            $exp=$loan_exp+$step->personal_exp;
+            $business_exp = $step->business_exp+$out;
+          $exp=$business_exp+$step->house_exp+$step->personal_exp;
             $pi=$step->passive_income+$in;
             if($exp<=$pi){
               $status='winner';
@@ -522,7 +533,8 @@ class Play extends CI_finecontrol
             'salary'=>$step->salary,
             'cash_in_hand' =>$new_cash_in_hand + ($in-$out),
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$business_exp,
             'passive_income'=>$step->passive_income+$in,
             'buy' =>json_encode($buy),
             'summary' =>$step->summary.",Yes",
@@ -538,7 +550,8 @@ class Play extends CI_finecontrol
             'salary'=>$step->salary,
             'cash_in_hand' =>$new_cash_in_hand,
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'passive_income'=>$step->passive_income,
             'buy' =>json_encode($buy),
             'summary' =>$step->summary.",No",
@@ -572,7 +585,8 @@ class Play extends CI_finecontrol
                 'salary'=>$step->salary,
                 'cash_in_hand' =>$new_cash_in_hand - ($bp),
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'buy' =>json_encode($buy),
                 'summary' =>$step->summary.",Yes",
                 'passive_income'=>$step->passive_income,
@@ -588,7 +602,8 @@ class Play extends CI_finecontrol
                 'salary'=>$step->salary,
                 'cash_in_hand' =>$new_cash_in_hand,
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'summary' =>$step->summary.",No",
@@ -605,7 +620,8 @@ class Play extends CI_finecontrol
                 'salary'=>$step->salary,
                 'cash_in_hand' =>$new_cash_in_hand - ($bp),
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'summary' =>$step->summary.",NA",
@@ -634,7 +650,8 @@ class Play extends CI_finecontrol
             'salary'=>$step->salary,
             'cash_in_hand' =>$step->cash_in_hand + ($gift),
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'buy' =>json_encode($buy),
             'passive_income'=>$step->passive_income,
             'summary' =>$step->summary.",Yes",
@@ -660,8 +677,8 @@ class Play extends CI_finecontrol
                     //--------- yes entry ---------
                     //get yt buy details
                     $yt_buy = $this->db->get_where('tbl_features', array('round'=> 1,'step'=> 3))->result();
-                    $loan_exp = $step->loan_exp-$yt_buy[0]->outflow;
-                    $exp=$loan_exp+$step->personal_exp;
+                    $business_exp = $step->business_exp-$yt_buy[0]->outflow;
+                    $exp=$business_exp+$step->house_exp+$step->personal_exp;
                     $pi=$step->passive_income-$yt_buy[0]->inflow;
                     if($exp<=$pi){
                       $status='winner';
@@ -675,7 +692,8 @@ class Play extends CI_finecontrol
                     'salary'=>$step->salary,
                     'cash_in_hand' =>$step->cash_in_hand + ($amount),
                     'personal_exp' =>$step->personal_exp,
-                    'loan_exp' =>$loan_exp,
+                    'house_exp' =>$step->house_exp,
+                    'business_exp' =>$business_exp,
                     'buy' =>json_encode($buy),
                     'passive_income'=>$step->passive_income-$yt_buy[0]->inflow,
                     'sell'=>json_encode($sell),
@@ -691,7 +709,8 @@ class Play extends CI_finecontrol
                     'salary'=>$step->salary,
                     'cash_in_hand' =>$step->cash_in_hand,
                     'personal_exp' =>$step->personal_exp,
-                    'loan_exp' =>$step->loan_exp,
+                    'house_exp' =>$step->house_exp,
+                    'business_exp' =>$step->business_exp,
                     'buy' =>json_encode($buy),
                     'summary' =>$step->summary.",No",
                     'passive_income'=>$step->passive_income,
@@ -705,7 +724,8 @@ class Play extends CI_finecontrol
                     'salary'=>$step->salary,
                     'cash_in_hand' =>$step->cash_in_hand,
                     'personal_exp' =>$step->personal_exp,
-                    'loan_exp' =>$step->loan_exp,
+                    'house_exp' =>$step->house_exp,
+                    'business_exp' =>$step->business_exp,
                     'buy' =>json_encode($buy),
                     'summary' =>$step->summary.",NA",
                     'passive_income'=>$step->passive_income,
@@ -720,7 +740,8 @@ class Play extends CI_finecontrol
                 'salary'=>$step->salary,
                 'cash_in_hand' =>$step->cash_in_hand,
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'buy' =>json_encode($buy),
                 'summary' =>$step->summary.",NA",
                 'passive_income'=>$step->passive_income,
@@ -757,7 +778,8 @@ class Play extends CI_finecontrol
                     'salary'=>$step->salary,
                     'cash_in_hand' =>$step->cash_in_hand + ($amount),
                     'personal_exp' =>$step->personal_exp,
-                    'loan_exp' =>$step->loan_exp,
+                    'house_exp' =>$step->house_exp,
+                    'business_exp' =>$step->business_exp,
                     'buy' =>json_encode($buy),
                     'passive_income'=>$step->passive_income,
                     'sell'=>json_encode($sell),
@@ -774,7 +796,8 @@ class Play extends CI_finecontrol
                     'salary'=>$step->salary,
                     'cash_in_hand' =>$step->cash_in_hand,
                     'personal_exp' =>$step->personal_exp,
-                    'loan_exp' =>$step->loan_exp,
+                    'house_exp' =>$step->house_exp,
+                    'business_exp' =>$step->business_exp,
                     'buy' =>json_encode($buy),
                     'passive_income'=>$step->passive_income,
                     'sell'=>json_encode($sell),
@@ -789,7 +812,8 @@ class Play extends CI_finecontrol
                     'salary'=>$step->salary,
                     'cash_in_hand' =>$step->cash_in_hand,
                     'personal_exp' =>$step->personal_exp,
-                    'loan_exp' =>$step->loan_exp,
+                    'house_exp' =>$step->house_exp,
+                    'business_exp' =>$step->business_exp,
                     'buy' =>json_encode($buy),
                     'passive_income'=>$step->passive_income,
                     'sell'=>json_encode($sell),
@@ -805,7 +829,8 @@ class Play extends CI_finecontrol
                 'salary'=>$step->salary,
                 'cash_in_hand' =>$step->cash_in_hand,
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'buy' =>json_encode($buy),
                 'passive_income'=>$step->passive_income,
                 'sell'=>json_encode($sell),
@@ -830,8 +855,8 @@ class Play extends CI_finecontrol
             if ($step->cash_in_hand > $exp) {
                 //--------- yes entry ---------
                 $new_salary = $step->salary;
-                $loan_exp = $step->loan_exp-($exp * LOAN_PERCENTAGE /100);
-                $total_exp=$loan_exp+$step->personal_exp;
+                $house_exp = $step->house_exp-($exp * LOAN_PERCENTAGE /100);
+                $total_exp=$house_exp+$step->business_exp+$step->personal_exp;
                 $pi=$step->passive_income;
                 if($total_exp<=$pi){
                   $status='winner';
@@ -845,7 +870,8 @@ class Play extends CI_finecontrol
                 'salary'=>$new_salary,
                 'cash_in_hand' =>$step->cash_in_hand - ($exp),
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$loan_exp,
+                'house_exp' =>$house_exp,
+                'business_exp' =>$step->business_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
@@ -862,7 +888,8 @@ class Play extends CI_finecontrol
                 'cash_in_hand' =>$step->cash_in_hand,
                 'passive_income'=>$step->passive_income,
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
                 'summary' =>$step->summary.",No",
@@ -878,7 +905,8 @@ class Play extends CI_finecontrol
                 'salary'=>$step->salary,
                 'cash_in_hand' =>$step->cash_in_hand - ($exp),
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
@@ -903,7 +931,7 @@ class Play extends CI_finecontrol
         $in =$step_info[0]->inflow;
         $out =$step_info[0]->outflow;
         foreach ($step_data->result() as $step) {
-            $salary =$step->salary - ($step->personal_exp + $step->loan_exp);
+            $salary =$step->salary - ($step->personal_exp + $step->business_exp);
             $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
             $buy = json_decode($step->buy);
             $sell = json_decode($step->sell);
@@ -913,13 +941,13 @@ class Play extends CI_finecontrol
                     $buy=array(7);
                 }
                 //--------- yes entry ---------
-                $loan_exp = $step->loan_exp+$out;
-                $exp=$loan_exp+$step->personal_exp;
+                $business_exp = $step->business_exp+$out;
+              $exp=$business_exp+$step->house_exp+$step->personal_exp;
                 $pi=$step->passive_income+$in;
                 if($exp<=$pi){
                   $status='winner';
                 }else{
-                if($step->cash_in_hand + ($in-$out)>0){
+                if($new_cash_in_hand + ($in-$out)>0){
                   $status='survived';
                 }else{
                   $status='out';
@@ -932,7 +960,8 @@ class Play extends CI_finecontrol
                   'salary'=>$step->salary,
                   'cash_in_hand' =>$new_cash_in_hand + ($in-$out),
                   'personal_exp' =>$step->personal_exp,
-                  'loan_exp' =>$loan_exp,
+                  'house_exp' =>$step->house_exp,
+                  'business_exp' =>$business_exp,
                   'passive_income'=>$step->passive_income+$in,
                   'buy' =>json_encode($buy),
                   'sell'=>json_encode($sell),
@@ -941,7 +970,7 @@ class Play extends CI_finecontrol
                   );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                 //--------- no entry ---------
-                $exp=$step->loan_exp+$step->personal_exp;
+                $exp=$step->business_exp+$step->personal_exp;
                 $pi=$step->passive_income;
                 if($exp<=$pi){
                   $status='winner';
@@ -956,7 +985,8 @@ class Play extends CI_finecontrol
         'salary'=>$step->salary,
         'cash_in_hand' =>$new_cash_in_hand,
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'passive_income'=>$step->passive_income,
         'buy' =>json_encode($buy),
         'sell'=>json_encode($sell),
@@ -997,7 +1027,8 @@ class Play extends CI_finecontrol
           'buy' =>json_encode($buy),
           'summary' =>$step->summary.",Yes",
           'personal_exp' =>$step->personal_exp,
-          'loan_exp' =>$step->loan_exp,
+          'house_exp' =>$step->house_exp,
+          'business_exp' =>$step->business_exp,
           'passive_income'=>$step->passive_income,
           'sell'=>json_encode($sell),
           'status'=>'survived'
@@ -1014,7 +1045,8 @@ class Play extends CI_finecontrol
           'buy' =>json_encode($buy),
           'summary' =>$step->summary.",No",
           'personal_exp' =>$step->personal_exp,
-          'loan_exp' =>$step->loan_exp,
+          'house_exp' =>$step->house_exp,
+          'business_exp' =>$step->business_exp,
           'passive_income'=>$step->passive_income,
           'sell'=>json_encode($sell),
           'status'=>'survived'
@@ -1032,7 +1064,8 @@ class Play extends CI_finecontrol
             'buy' =>json_encode($buy),
             'summary' =>$step->summary.",NA",
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'sell'=>json_encode($sell),
             'passive_income'=>$step->passive_income,
             'status'=>'survived'
@@ -1064,8 +1097,8 @@ class Play extends CI_finecontrol
             }
             //--------- yes entry ---------
             $new_cash_in_hand = $step->cash_in_hand;
-            $loan_exp = $step->loan_exp+$out;
-            $exp=$loan_exp+$step->personal_exp;
+            $business_exp = $step->business_exp+$out;
+          $exp=$business_exp+$step->house_exp+$step->personal_exp;
             $pi=$step->passive_income+$in;
               if($exp<=$pi){
                 $status='winner';
@@ -1084,7 +1117,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$new_cash_in_hand + ($in-$out),
         'summary' =>$step->summary.",Yes",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$business_exp,
         'passive_income'=>$step->passive_income+$in,
         'buy' =>json_encode($buy),
         'sell' =>$step->sell,
@@ -1101,7 +1135,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$new_cash_in_hand,
         'summary' =>$step->summary.",No",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'passive_income'=>$step->passive_income,
         'buy' =>json_encode($buy),
         'sell' =>$step->sell,
@@ -1133,7 +1168,8 @@ class Play extends CI_finecontrol
             'cash_in_hand' =>$step->cash_in_hand - ($exp),
             'summary' =>$step->summary.",Yes",
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'passive_income'=>$step->passive_income,
             'buy' =>json_encode($buy),
             'sell' =>$step->sell,
@@ -1152,7 +1188,8 @@ class Play extends CI_finecontrol
             'cash_in_hand' =>$step->cash_in_hand - ($exp),
             'summary' =>$step->summary.",Yes",
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'passive_income'=>$step->passive_income,
             'buy' =>json_encode($buy),
             'sell' =>$step->sell,
@@ -1190,7 +1227,9 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand + ($amount),
         'summary' =>$step->summary.",Yes",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'business_exp' =>$step->business_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income,
         'sell'=>json_encode($sell),
@@ -1207,7 +1246,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand,
         'summary' =>$step->summary.",No",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income,
         'status'=>'survived',
@@ -1222,7 +1262,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand,
         'summary' =>$step->summary.",NA",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income,
         'status'=>'survived',
@@ -1238,7 +1279,8 @@ class Play extends CI_finecontrol
             'cash_in_hand' =>$step->cash_in_hand,
             'summary' =>$step->summary.",NA",
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'buy' =>json_encode($buy),
             'passive_income'=>$step->passive_income,
             'status'=>'survived',
@@ -1269,8 +1311,8 @@ class Play extends CI_finecontrol
                     //--------- yes entry ---------
                     //get yt buy details
                     $ct_buy = $this->db->get_where('tbl_features', array('round'=> 2,'step'=> 3))->result();
-                    $loan_exp = $step->loan_exp-$ct_buy[0]->outflow;
-                    $exp=$loan_exp+$step->personal_exp;
+                    $business_exp = $step->business_exp-$ct_buy[0]->outflow;
+                  $exp=$business_exp+$step->house_exp+$step->personal_exp;
                     $pi=$step->passive_income-$ct_buy[0]->inflow;
                     if($exp<=$pi){
                       $status='winner';
@@ -1285,7 +1327,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand + ($amount),
         'summary' =>$step->summary.",Yes",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income-$ct_buy[0]->inflow,
         'sell'=>json_encode($sell),
@@ -1302,7 +1345,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand,
       'summary' =>$step->summary.",No",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income,
         'status'=>'survived',
@@ -1317,7 +1361,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand,
         'summary' =>$step->summary.",NA",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income,
         'status'=>'survived',
@@ -1332,7 +1377,8 @@ class Play extends CI_finecontrol
             'salary'=>$step->salary,
             'cash_in_hand' =>$step->cash_in_hand,
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'buy' =>json_encode($buy),
             'passive_income'=>$step->passive_income,
             'status'=>'survived',
@@ -1357,8 +1403,8 @@ class Play extends CI_finecontrol
             if ($step->cash_in_hand > $exp) {
                 //--------- yes entry ---------
                 $new_salary = $step->salary;
-                $loan_exp = $step->loan_exp-($exp * LOAN_PERCENTAGE /100);
-                $total_exp=$loan_exp+$step->personal_exp;
+                $house_exp = $step->house_exp-($exp * LOAN_PERCENTAGE /100);
+                $total_exp=$house_exp+$step->business_exp+$step->personal_exp;
               $pi=$step->passive_income;
               if($total_exp<=$pi){
                 $status='winner';
@@ -1373,7 +1419,8 @@ class Play extends CI_finecontrol
                 'cash_in_hand' =>$step->cash_in_hand - ($exp),
                 'summary' =>$step->summary.",Yes",
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$loan_exp,
+                'house_exp' =>$house_exp,
+                'business_exp' =>$step->business_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
@@ -1390,7 +1437,8 @@ class Play extends CI_finecontrol
                 'passive_income'=>$step->passive_income,
                 'summary' =>$step->summary.",No",
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
                 'status'=>'survived'
@@ -1406,7 +1454,8 @@ class Play extends CI_finecontrol
                 'cash_in_hand' =>$step->cash_in_hand - ($exp),
                 'summary' =>$step->summary.",Yes",
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
@@ -1428,9 +1477,9 @@ class Play extends CI_finecontrol
         $step_info = $this->db->get_where('tbl_features', array('round'=> 4,'step'=> 2))->result();
         $amount =$step_info[0]->inflow;
         foreach ($step_data->result() as $step) {
-            $salary =$step->salary - ($step->personal_exp + $step->loan_exp);
+            $salary =$step->salary - ($step->personal_exp + $step->business_exp);
             $new_cash_in_hand = $step->cash_in_hand + $salary + $step->passive_income;
-            $exp=$step->loan_exp+$step->personal_exp;
+            $exp=$step->business_exp+$step->house_exp+$step->personal_exp;
               $pi=$step->passive_income;
               if($exp<=$pi){
                 $status='winner';
@@ -1446,7 +1495,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$new_cash_in_hand + ($amount),
         'summary' =>$step->summary.",Yes",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'passive_income'=>$step->passive_income,
         'buy' =>$step->buy,
         'sell'=>$step->sell,
@@ -1476,8 +1526,8 @@ class Play extends CI_finecontrol
                     //--------- yes entry ---------
                     //get land buy details
                     $land_buy = $this->db->get_where('tbl_features', array('round'=> 3,'step'=> 4))->result();
-                    $loan_exp = $step->loan_exp-$land_buy[0]->outflow;
-                    $exp=$loan_exp+$step->personal_exp;
+                    $business_exp = $step->business_exp-$land_buy[0]->outflow;
+                    $exp=$business_exp+$step->house_exp+$step->personal_exp;
                       $pi=$step->passive_income-$land_buy[0]->inflow;
                       if($exp<=$pi){
                         $status='winner';
@@ -1492,7 +1542,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand + ($amount),
         'summary' =>$step->summary.",Yes",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income-$land_buy[0]->inflow,
         'sell'=>json_encode($sell),
@@ -1509,7 +1560,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand,
         'summary' =>$step->summary.",No",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income,
         'status'=>'survived',
@@ -1524,7 +1576,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand,
         'summary' =>$step->summary.",NA",
           'personal_exp' =>$step->personal_exp,
-          'loan_exp' =>$step->loan_exp,
+          'house_exp' =>$step->house_exp,
+          'business_exp' =>$step->business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income,
         'status'=>'survived',
@@ -1540,7 +1593,8 @@ class Play extends CI_finecontrol
             'cash_in_hand' =>$step->cash_in_hand,
             'summary' =>$step->summary.",NA",
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'buy' =>json_encode($buy),
             'passive_income'=>$step->passive_income,
             'status'=>'survived',
@@ -1571,8 +1625,8 @@ class Play extends CI_finecontrol
                     //--------- yes entry ---------
                     //get land buy details
                     $lab_buy = $this->db->get_where('tbl_features', array('round'=> 3,'step'=> 2))->result();
-                    $loan_exp = $step->loan_exp-$lab_buy[0]->outflow;
-                    $exp=$loan_exp+$step->personal_exp;
+                    $business_exp = $step->business_exp-$lab_buy[0]->outflow;
+                    $exp=$business_exp+$step->house_exp+$step->personal_exp;
                       $pi=$step->passive_income-$lab_buy[0]->inflow;
                       if($exp<=$pi){
                         $status='winner';
@@ -1587,7 +1641,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand + ($amount),
         'summary' =>$step->summary.",Yes",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income -$lab_buy[0]->inflow,
         'sell'=>json_encode($sell),
@@ -1604,7 +1659,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand,
         'summary' =>$step->summary.",No",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income,
         'status'=>'survived',
@@ -1619,7 +1675,8 @@ class Play extends CI_finecontrol
         'cash_in_hand' =>$step->cash_in_hand,
         'summary' =>$step->summary.",NA",
         'personal_exp' =>$step->personal_exp,
-        'loan_exp' =>$step->loan_exp,
+        'house_exp' =>$step->house_exp,
+        'business_exp' =>$step->business_exp,
         'buy' =>json_encode($buy),
         'passive_income'=>$step->passive_income,
         'status'=>'survived',
@@ -1635,7 +1692,8 @@ class Play extends CI_finecontrol
             'cash_in_hand' =>$step->cash_in_hand,
             'summary' =>$step->summary.",NA",
             'personal_exp' =>$step->personal_exp,
-            'loan_exp' =>$step->loan_exp,
+            'house_exp' =>$step->house_exp,
+            'business_exp' =>$step->business_exp,
             'buy' =>json_encode($buy),
             'passive_income'=>$step->passive_income,
             'status'=>'survived',
@@ -1659,8 +1717,8 @@ class Play extends CI_finecontrol
                 //--------- yes entry ---------
                 $new_salary = $step->salary;
                 $new_cash = $step->cash_in_hand - ($exp);
-                $loan_exp = $step->loan_exp-($exp * LOAN_PERCENTAGE /100);
-                $total_exp = $loan_exp+$step->personal_exp;
+                $house_exp = $step->house_exp-($exp * LOAN_PERCENTAGE /100);
+                $total_exp = $house_exp+$step->business_exp+$step->personal_exp;
                 if ($total_exp <= $step->passive_income) {
                     $status1= 'winner';
                 } else {
@@ -1674,7 +1732,8 @@ class Play extends CI_finecontrol
                 'cash_in_hand' =>$new_cash,
                 'summary' =>$step->summary.",Yes",
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$loan_exp,
+                'house_exp' =>$house_exp,
+                'business_exp' =>$step->business_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
@@ -1682,7 +1741,7 @@ class Play extends CI_finecontrol
                 );
                 $last_id=$this->base_model->insert_table("tbl_game_cases", $data_insert, 1) ;
                 //--------- no entry ---------
-                $total_exp2 = $step->loan_exp+$step->personal_exp;
+                $total_exp2 = $step->business_exp+$step->house_exp+$step->personal_exp;
                 if ($total_exp2 <= $step->passive_income) {
                     $status2= 'winner';
                 } else {
@@ -1697,7 +1756,8 @@ class Play extends CI_finecontrol
                 'passive_income'=>$step->passive_income,
                 'summary' =>$step->summary.",No",
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'house_exp' =>$step->house_exp,
+                'business_exp' =>$step->business_exp,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
                 'status'=>$status2
@@ -1713,7 +1773,8 @@ class Play extends CI_finecontrol
                 'cash_in_hand' =>$step->cash_in_hand - ($exp),
                 'summary' =>$step->summary.",Yes",
                 'personal_exp' =>$step->personal_exp,
-                'loan_exp' =>$step->loan_exp,
+                'business_exp' =>$step->business_exp,
+                'house_exp' =>$step->house_exp,
                 'passive_income'=>$step->passive_income,
                 'buy' =>json_encode($buy),
                 'sell'=>json_encode($sell),
@@ -1841,8 +1902,8 @@ class Play extends CI_finecontrol
             $object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $row->salary);
             $object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row->cash_in_hand);
             $object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $row->personal_exp);
-            $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row,  $setting_info[0]->loan_exp);
-            $object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, $row->loan_exp-$setting_info[0]->loan_exp);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $row->house_exp);
+            $object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row,$row->business_exp);
             $object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $passive_income);
             $object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $buy_string);
             $object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, $sell_string);
